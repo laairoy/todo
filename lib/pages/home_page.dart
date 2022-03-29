@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:todo/pages/fixedList.dart';
+import 'package:todo/pages/fixed_list.dart';
+import 'package:todo/pages/list_repository.dart';
 import 'package:todo/pages/login_data.dart';
 
+import 'load_list.dart';
 import 'login_page.dart';
 
 class HomePage extends StatelessWidget {
@@ -9,6 +11,7 @@ class HomePage extends StatelessWidget {
 
   final LoginData loginData = LoginData();
   final List<ItemList> fixedList = FixedList().fixedList;
+  final List<Item> loadList = ListRepository().loadList;
 
   @override
   Widget build(BuildContext context) {
@@ -25,13 +28,33 @@ class HomePage extends StatelessWidget {
           ),
         ),
       ),
-      body: ListView.builder(
-        itemCount: fixedList.length,
-        itemBuilder: (context, int index) {
-          return ListTile(
-              title: Text(fixedList[index].title),
-              leading: fixedList[index].icon);
-        },
+      body: Column(
+        children: [
+          ListView.builder(
+            shrinkWrap: true,
+            itemCount: fixedList.length,
+            itemBuilder: (context, int index) {
+              return ListTile(
+                title: Text(fixedList[index].title),
+                leading: fixedList[index].icon,
+                trailing: const Text('0'),
+              );
+            },
+          ),
+          ListView.builder(
+            shrinkWrap: true,
+            itemCount: loadList.length,
+            itemBuilder: (context, int index) {
+              return ListTile(
+                title: Text(loadList[index].name),
+                leading: loadList[index].type == ItemType.FOLDER
+                    ? Icon(Icons.folder, color: loadList[index].color)
+                    : Icon(Icons.list, color: loadList[index].color),
+                trailing: const Text('0'),
+              );
+            },
+          ),
+        ],
       ),
       bottomNavigationBar: BottomAppBar(
         color: ThemeData.dark().bottomAppBarColor,
@@ -42,7 +65,8 @@ class HomePage extends StatelessWidget {
               const Icon(Icons.add),
               const Text('Nova Lista'),
               const Spacer(),
-              IconButton(onPressed: () {}, icon: const Icon(Icons.bookmark_add)),
+              IconButton(
+                  onPressed: () {}, icon: const Icon(Icons.bookmark_add)),
               IconButton(
                   onPressed: () {
                     Navigator.push(
