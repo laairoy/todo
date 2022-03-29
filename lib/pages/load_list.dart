@@ -15,13 +15,14 @@ abstract class Item {
 }
 
 class FolderItem extends Item {
-  FolderItem({required int id, required String name, required Color color, required ItemType type})
-      : super(id: id, name: name, color: color, type: type);
+  List<ListItem> iList;
+  FolderItem({required int id, required String name, required Color color, required this.iList})
+      : super(id: id, name: name, color: color, type: ItemType.FOLDER);
 }
 
 class ListItem extends Item {
-  ListItem({required int id, required String name, required Color color, required ItemType type})
-      : super(id: id, name: name, color: color, type: type);
+  ListItem({required int id, required String name, required Color color})
+      : super(id: id, name: name, color: color, type: ItemType.LIST);
 }
 
 enum ItemType {

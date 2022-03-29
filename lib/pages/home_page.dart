@@ -32,6 +32,7 @@ class HomePage extends StatelessWidget {
         children: [
           ListView.builder(
             shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
             itemCount: fixedList.length,
             itemBuilder: (context, int index) {
               return ListTile(
@@ -43,15 +44,37 @@ class HomePage extends StatelessWidget {
           ),
           ListView.builder(
             shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
             itemCount: loadList.length,
             itemBuilder: (context, int index) {
-              return ListTile(
-                title: Text(loadList[index].name),
-                leading: loadList[index].type == ItemType.FOLDER
-                    ? Icon(Icons.folder, color: loadList[index].color)
-                    : Icon(Icons.list, color: loadList[index].color),
-                trailing: const Text('0'),
-              );
+              return loadList[index].type == ItemType.FOLDER
+                  ? ExpansionTile(
+                      title: Text(loadList[index].name),
+                      leading: Icon(Icons.folder, color: loadList[index].color),
+                      childrenPadding: EdgeInsets.only(left: 10),
+                      children: [
+                        ListView.builder(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount:
+                              (loadList[index] as FolderItem).iList.length,
+                          itemBuilder: (BuildContext context, int i) {
+                            List<ListItem> subList =
+                                (loadList[index] as FolderItem).iList;
+                            return ListTile(
+                              title: Text(subList[i].name),
+                              leading: Icon(Icons.list, color: subList[i].color),
+                              trailing: const Text('0'),
+                            );
+                          },
+                        ),
+                      ],
+                    )
+                  : ListTile(
+                      title: Text(loadList[index].name),
+                      leading: Icon(Icons.list, color: loadList[index].color),
+                      trailing: const Text('0'),
+                    );
             },
           ),
         ],
