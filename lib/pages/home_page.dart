@@ -28,56 +28,58 @@ class HomePage extends StatelessWidget {
           ),
         ),
       ),
-      body: Column(
-        children: [
-          ListView.builder(
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            itemCount: fixedList.length,
-            itemBuilder: (context, int index) {
-              return ListTile(
-                title: Text(fixedList[index].title),
-                leading: fixedList[index].icon,
-                trailing: const Text('0'),
-              );
-            },
-          ),
-          ListView.builder(
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            itemCount: loadList.length,
-            itemBuilder: (context, int index) {
-              return loadList[index].type == ItemType.FOLDER
-                  ? ExpansionTile(
-                      title: Text(loadList[index].name),
-                      leading: Icon(Icons.folder, color: loadList[index].color),
-                      childrenPadding: EdgeInsets.only(left: 10),
-                      children: [
-                        ListView.builder(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemCount:
-                              (loadList[index] as FolderItem).iList.length,
-                          itemBuilder: (BuildContext context, int i) {
-                            List<ListItem> subList =
-                                (loadList[index] as FolderItem).iList;
-                            return ListTile(
-                              title: Text(subList[i].name),
-                              leading: Icon(Icons.list, color: subList[i].color),
-                              trailing: const Text('0'),
-                            );
-                          },
-                        ),
-                      ],
-                    )
-                  : ListTile(
-                      title: Text(loadList[index].name),
-                      leading: Icon(Icons.list, color: loadList[index].color),
-                      trailing: const Text('0'),
-                    );
-            },
-          ),
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            ListView.builder(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: fixedList.length,
+              itemBuilder: (context, int index) {
+                return ListTile(
+                  title: Text(fixedList[index].title),
+                  leading: fixedList[index].icon,
+                  trailing: const Text('0'),
+                );
+              },
+            ),
+            ListView.builder(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: loadList.length,
+              itemBuilder: (context, int index) {
+                return loadList[index].type == ItemType.FOLDER
+                    ? ExpansionTile(
+                        title: Text(loadList[index].name),
+                        leading: Icon(Icons.folder, color: loadList[index].color),
+                        childrenPadding: EdgeInsets.only(left: 10),
+                        children: [
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount:
+                                (loadList[index] as FolderItem).iList.length,
+                            itemBuilder: (BuildContext context, int i) {
+                              List<ListItem> subList =
+                                  (loadList[index] as FolderItem).iList;
+                              return ListTile(
+                                title: Text(subList[i].name),
+                                leading: Icon(Icons.list, color: subList[i].color),
+                                trailing: const Text('0'),
+                              );
+                            },
+                          ),
+                        ],
+                      )
+                    : ListTile(
+                        title: Text(loadList[index].name),
+                        leading: Icon(Icons.list, color: loadList[index].color),
+                        trailing: const Text('0'),
+                      );
+              },
+            ),
+          ],
+        ),
       ),
       bottomNavigationBar: BottomAppBar(
         color: ThemeData.dark().bottomAppBarColor,
