@@ -40,6 +40,7 @@ class HomePage extends StatelessWidget {
                   title: Text(fixedList[index].title),
                   leading: fixedList[index].icon,
                   trailing: const Text('0'),
+                  onTap: () => print('Ola mundo'),
                 );
               },
             ),
@@ -50,45 +51,59 @@ class HomePage extends StatelessWidget {
               itemBuilder: (context, int index) {
                 return loadList[index].type == ItemType.FOLDER
                     ? ExpansionTile(
-                        title: Text(loadList[index].name),
-                        leading: Icon(Icons.folder, color: loadList[index].color),
-                        childrenPadding: EdgeInsets.only(left: 10),
-                        children: [
-                          ListView.builder(
-                            shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
-                            itemCount:
-                                (loadList[index] as FolderItem).iList.length,
-                            itemBuilder: (BuildContext context, int i) {
-                              List<ListItem> subList =
-                                  (loadList[index] as FolderItem).iList;
-                              return ListTile(
-                                title: Text(subList[i].name),
-                                leading: Icon(Icons.list, color: subList[i].color),
-                                trailing: const Text('0'),
-                              );
-                            },
-                          ),
-                        ],
-                      )
+                  title: Text(loadList[index].name),
+                  leading: Icon(Icons.folder, color: loadList[index].color),
+                  childrenPadding: EdgeInsets.only(left: 10),
+                  children: [
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount:
+                      (loadList[index] as FolderItem).iList.length,
+                      itemBuilder: (BuildContext context, int i) {
+                        List<ListItem> subList =
+                            (loadList[index] as FolderItem).iList;
+                        return ListTile(
+                          title: Text(subList[i].name),
+                          leading: Icon(Icons.list, color: subList[i].color),
+                          trailing: const Text('0'),
+                          onTap: () => print('ola mundo'),
+                        );
+                      },
+                    ),
+                  ],
+                )
                     : ListTile(
-                        title: Text(loadList[index].name),
-                        leading: Icon(Icons.list, color: loadList[index].color),
-                        trailing: const Text('0'),
-                      );
+                  title: Text(loadList[index].name),
+                  leading: Icon(Icons.list, color: loadList[index].color),
+                  trailing: const Text('0'),
+                  onTap: () => print('Ola mundo'),
+                );
               },
             ),
           ],
         ),
       ),
       bottomNavigationBar: BottomAppBar(
-        color: ThemeData.dark().bottomAppBarColor,
+        color: ThemeData
+            .dark()
+            .bottomAppBarColor,
         child: IconTheme(
-          data: IconThemeData(color: Theme.of(context).colorScheme.onPrimary),
+          data: IconThemeData(color: Theme
+              .of(context)
+              .colorScheme
+              .onPrimary),
           child: Row(
             children: [
-              const Icon(Icons.add),
-              const Text('Nova Lista'),
+              InkWell(
+                onTap: () => print('Criar nova lista!'),
+                child: Row(
+                 children: [
+                   const Icon(Icons.add),
+                   const Text('Nova Lista', style: TextStyle(fontSize: 20),),
+                 ],
+                ),
+              ),
               const Spacer(),
               IconButton(
                   onPressed: () {}, icon: const Icon(Icons.bookmark_add)),
