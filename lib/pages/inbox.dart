@@ -11,7 +11,9 @@ class Inbox extends StatefulWidget {
 class _InboxState extends State<Inbox> {
   @override
   Widget build(BuildContext context) {
-    final table = TaskListRepository.table;
+    final table = TaskListRepository.table
+        .where((element) => element.finished == false)
+        .toList();
 
     return Scaffold(
       appBar: AppBar(
