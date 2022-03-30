@@ -24,6 +24,7 @@ class _InboxState extends State<Inbox> {
             //   leading: table[task].icon,
             title: Text(table[task].name),
             subtitle: Text(table[task].date),
+            controlAffinity: ListTileControlAffinity.leading,
             //   trailing: Text(table[task].date),
             key: Key(table[task].name),
             value: table[task].finished,
