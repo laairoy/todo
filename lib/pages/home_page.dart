@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:todo/pages/fixed_list.dart';
+import 'package:todo/pages/inbox.dart';
 import 'package:todo/pages/list_repository.dart';
 import 'package:todo/pages/login_data.dart';
 
@@ -69,7 +70,14 @@ class HomePage extends StatelessWidget {
                                 leading:
                                     Icon(Icons.list, color: subList[i].color),
                                 trailing: const Text('0'),
-                                onTap: () => print('ola mundo'),
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => Inbox(),
+                                    ),
+                                  );
+                                },
                               );
                             },
                           ),
@@ -79,7 +87,14 @@ class HomePage extends StatelessWidget {
                         title: Text(loadList[index].name),
                         leading: Icon(Icons.list, color: loadList[index].color),
                         trailing: const Text('0'),
-                        onTap: () => print('Ola mundo'),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Inbox(),
+                            ),
+                          );
+                        },
                       );
               },
             ),
@@ -95,9 +110,9 @@ class HomePage extends StatelessWidget {
               InkWell(
                 onTap: () => print('Criar nova lista!'),
                 child: Row(
-                  children: [
-                    const Icon(Icons.add),
-                    const Text(
+                  children: const [
+                    Icon(Icons.add),
+                    Text(
                       'Nova Lista',
                       style: TextStyle(fontSize: 20),
                     ),
@@ -108,13 +123,7 @@ class HomePage extends StatelessWidget {
               IconButton(
                   onPressed: () {}, icon: const Icon(Icons.bookmark_add)),
               IconButton(
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => inbox(),
-                        ));
-                  },
+                  onPressed: () => print('testes'),
                   icon: const Icon(Icons.create_new_folder)),
             ],
           ),

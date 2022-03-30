@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:todo/repositories/task_list_repository.dart';
 
-class inbox extends StatelessWidget {
-  inbox({Key? key}) : super(key: key);
+class Inbox extends StatelessWidget {
+  Inbox({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
