@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:todo/pages/fixedList.dart';
 import 'package:todo/pages/login_data.dart';
-
+import 'inbox.dart';
 import 'login_page.dart';
 
 class HomePage extends StatelessWidget {
@@ -42,13 +42,14 @@ class HomePage extends StatelessWidget {
               const Icon(Icons.add),
               const Text('Nova Lista'),
               const Spacer(),
-              IconButton(onPressed: () {}, icon: const Icon(Icons.bookmark_add)),
+              IconButton(
+                  onPressed: () {}, icon: const Icon(Icons.bookmark_add)),
               IconButton(
                   onPressed: () {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => LoginPage(),
+                          builder: (context) => inbox(),
                         ));
                   },
                   icon: const Icon(Icons.create_new_folder)),
