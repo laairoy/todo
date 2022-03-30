@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:todo/pages/load_list.dart';
+import 'package:todo/models/load_list_repository.dart';
 
 class ListRepository {
   List<Item> loadList = [

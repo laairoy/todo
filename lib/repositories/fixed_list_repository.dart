@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../models/item_list.dart';
+
 class FixedList {
   List<ItemList> fixedList = [
     ItemList(
@@ -24,12 +26,4 @@ class FixedList {
   ];
 }
 
-class ItemList {
-  String title;
-  Icon icon;
 
-  ItemList({
-    required this.title,
-    required this.icon,
-  });
-}

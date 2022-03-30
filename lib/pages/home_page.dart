@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:todo/pages/fixed_list.dart';
+import 'package:todo/models/item_list.dart';
+import 'package:todo/repositories/fixed_list_repository.dart';
 import 'package:todo/pages/inbox.dart';
-import 'package:todo/pages/list_repository.dart';
-import 'package:todo/pages/login_data.dart';
+import 'package:todo/repositories/list_repository.dart';
+import 'package:todo/models/login_data.dart';
 
-import 'load_list.dart';
-import 'login_page.dart';
+import 'add_item.dart';
+import '../models/load_list_repository.dart';
 
 class HomePage extends StatelessWidget {
   HomePage({Key? key}) : super(key: key);
@@ -34,20 +35,20 @@ class HomePage extends StatelessWidget {
           children: [
             ListView.builder(
               shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
+              physics: const NeverScrollableScrollPhysics(),
               itemCount: fixedList.length,
               itemBuilder: (context, int index) {
                 return ListTile(
                   title: Text(fixedList[index].title),
                   leading: fixedList[index].icon,
                   trailing: const Text('0'),
-                  onTap: () => print('Ola mundo'),
+                  onTap: () => {},
                 );
               },
             ),
             ListView.builder(
               shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
+              physics: const NeverScrollableScrollPhysics(),
               itemCount: loadList.length,
               itemBuilder: (context, int index) {
                 return loadList[index].type == ItemType.FOLDER
@@ -55,11 +56,11 @@ class HomePage extends StatelessWidget {
                         title: Text(loadList[index].name),
                         leading:
                             Icon(Icons.folder, color: loadList[index].color),
-                        childrenPadding: EdgeInsets.only(left: 10),
+                        childrenPadding: const EdgeInsets.only(left: 10),
                         children: [
                           ListView.builder(
                             shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
+                            physics: const NeverScrollableScrollPhysics(),
                             itemCount:
                                 (loadList[index] as FolderItem).iList.length,
                             itemBuilder: (BuildContext context, int i) {
@@ -108,7 +109,13 @@ class HomePage extends StatelessWidget {
           child: Row(
             children: [
               InkWell(
-                onTap: () => print('Criar nova lista!'),
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AddItem(type: ItemType.LIST),
+                      ));
+                },
                 child: Row(
                   children: const [
                     Icon(Icons.add),
@@ -121,9 +128,17 @@ class HomePage extends StatelessWidget {
               ),
               const Spacer(),
               IconButton(
-                  onPressed: () {}, icon: const Icon(Icons.bookmark_add)),
+                  onPressed: () => {},
+                  icon: const Icon(Icons.bookmark_add)),
               IconButton(
-                  onPressed: () => print('testes'),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AddItem(type: ItemType.FOLDER),
+                      ),
+                    );
+                  },
                   icon: const Icon(Icons.create_new_folder)),
             ],
           ),
