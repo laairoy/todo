@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:todo/pages/fixedList.dart';
+import 'package:todo/pages/fixed_list.dart';
+import 'package:todo/pages/list_repository.dart';
 import 'package:todo/pages/login_data.dart';
-import 'inbox.dart';
+
+import 'load_list.dart';
 import 'login_page.dart';
 
 class HomePage extends StatelessWidget {
@@ -9,6 +11,7 @@ class HomePage extends StatelessWidget {
 
   final LoginData loginData = LoginData();
   final List<ItemList> fixedList = FixedList().fixedList;
+  final List<Item> loadList = ListRepository().loadList;
 
   @override
   Widget build(BuildContext context) {
@@ -25,13 +28,63 @@ class HomePage extends StatelessWidget {
           ),
         ),
       ),
-      body: ListView.builder(
-        itemCount: fixedList.length,
-        itemBuilder: (context, int index) {
-          return ListTile(
-              title: Text(fixedList[index].title),
-              leading: fixedList[index].icon);
-        },
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            ListView.builder(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: fixedList.length,
+              itemBuilder: (context, int index) {
+                return ListTile(
+                  title: Text(fixedList[index].title),
+                  leading: fixedList[index].icon,
+                  trailing: const Text('0'),
+                  onTap: () => print('Ola mundo'),
+                );
+              },
+            ),
+            ListView.builder(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: loadList.length,
+              itemBuilder: (context, int index) {
+                return loadList[index].type == ItemType.FOLDER
+                    ? ExpansionTile(
+                        title: Text(loadList[index].name),
+                        leading:
+                            Icon(Icons.folder, color: loadList[index].color),
+                        childrenPadding: EdgeInsets.only(left: 10),
+                        children: [
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount:
+                                (loadList[index] as FolderItem).iList.length,
+                            itemBuilder: (BuildContext context, int i) {
+                              List<ListItem> subList =
+                                  (loadList[index] as FolderItem).iList;
+                              return ListTile(
+                                title: Text(subList[i].name),
+                                leading:
+                                    Icon(Icons.list, color: subList[i].color),
+                                trailing: const Text('0'),
+                                onTap: () => print('ola mundo'),
+                              );
+                            },
+                          ),
+                        ],
+                      )
+                    : ListTile(
+                        title: Text(loadList[index].name),
+                        leading: Icon(Icons.list, color: loadList[index].color),
+                        trailing: const Text('0'),
+                        onTap: () => print('Ola mundo'),
+                      );
+              },
+            ),
+          ],
+        ),
       ),
       bottomNavigationBar: BottomAppBar(
         color: ThemeData.dark().bottomAppBarColor,
@@ -39,8 +92,18 @@ class HomePage extends StatelessWidget {
           data: IconThemeData(color: Theme.of(context).colorScheme.onPrimary),
           child: Row(
             children: [
-              const Icon(Icons.add),
-              const Text('Nova Lista'),
+              InkWell(
+                onTap: () => print('Criar nova lista!'),
+                child: Row(
+                  children: [
+                    const Icon(Icons.add),
+                    const Text(
+                      'Nova Lista',
+                      style: TextStyle(fontSize: 20),
+                    ),
+                  ],
+                ),
+              ),
               const Spacer(),
               IconButton(
                   onPressed: () {}, icon: const Icon(Icons.bookmark_add)),
