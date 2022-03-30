@@ -6,6 +6,7 @@ class TaskListRepository {
     TaskList(
       name: 'Estudar',
       date: '10/05/22',
+      finished: true,
       icon: const Icon(
         Icons.circle,
         color: Color.fromARGB(255, 241, 245, 241),
@@ -14,6 +15,7 @@ class TaskListRepository {
     TaskList(
       name: 'Correr',
       date: '11/05/22',
+      finished: false,
       icon: const Icon(
         Icons.circle,
         color: Color.fromARGB(255, 241, 245, 241),
@@ -22,6 +24,7 @@ class TaskListRepository {
     TaskList(
       name: 'varrer a casa',
       date: '12/06/23',
+      finished: true,
       icon: const Icon(
         Icons.circle,
         color: Color.fromARGB(255, 241, 245, 241),
