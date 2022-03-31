@@ -35,7 +35,7 @@ class AddItem extends StatelessWidget {
       appBar: AppBar(
         title: Text('Adicionar $nameType'),
       ),
-      body: Container(
+      body: Padding(
         padding: EdgeInsets.all(20),
         child: Form(
           key: _formKey,
@@ -66,7 +66,13 @@ class AddItem extends StatelessWidget {
                         .where((element) => element.type == ItemType.FOLDER)
                         .map((e) {
                       return DropdownMenuItem(
-                        child: Text(e.name),
+                        child: Row(children: [
+                          const Icon(Icons.folder),
+                          Padding(
+                            child: Text(e.name),
+                            padding: EdgeInsets.only(left: 10),
+                          )
+                        ]),
                         value: e.id,
                       );
                     }).toList(),
@@ -106,7 +112,9 @@ class AddItem extends StatelessWidget {
                       if (folderId == -1) {
                         loadList.add(item);
                       } else {
-                        (loadList.firstWhere((element) => element.id == folderId) as FolderItem)
+                        (loadList.firstWhere(
+                                    (element) => element.id == folderId)
+                                as FolderItem)
                             .iList
                             .add(item as ListItem);
                       }
