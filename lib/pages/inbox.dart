@@ -4,8 +4,9 @@ import 'package:todo/repositories/task_list_repository.dart';
 
 class Inbox extends StatefulWidget {
   late Item listItem;
+  final void Function() onSave;
 
-  Inbox({Key? key, required this.listItem}) : super(key: key);
+  Inbox({Key? key, required this.listItem, required this.onSave}) : super(key: key);
 
   @override
   State<Inbox> createState() => _InboxState();
@@ -14,7 +15,7 @@ class Inbox extends StatefulWidget {
 class _InboxState extends State<Inbox> {
   @override
   Widget build(BuildContext context) {
-    final table = TaskListRepository.table
+    final table = TaskListRepository.instance.table
         .where((element) => element.listId == widget.listItem.id)
         .where((element) => element.finished == false)
         .toList();
@@ -37,7 +38,9 @@ class _InboxState extends State<Inbox> {
             onChanged: (value) {
               setState(() {
                 table[task].finished = value;
-              });
+                widget.onSave();
+              }
+              );
             },
           );
         },

@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:todo/models/load_list_repository.dart';
 
 class ListRepository {
-
+  static final ListRepository _instance = ListRepository._();
   List<Item> loadList = [];
 
-  ListRepository() {
+  static ListRepository get instance => _instance;
+
+  ListRepository._() {
     loadList = [
       ListItem(id: 1, name: 'Livros', color: Colors.red),
       FolderItem(
@@ -20,5 +22,4 @@ class ListRepository {
       ListItem(id: 7, name: 'Casa', color: Colors.purple),
     ];
   }
-
 }

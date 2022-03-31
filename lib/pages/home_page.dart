@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:todo/cadastrar.dart';
 import 'package:todo/models/item_list.dart';
+import 'package:todo/models/task_list.dart';
 import 'package:todo/repositories/fixed_list_repository.dart';
 import 'package:todo/pages/inbox.dart';
 import 'package:todo/repositories/list_repository.dart';
 import 'package:todo/models/login_data.dart';
+import 'package:todo/repositories/task_list_repository.dart';
 
 import 'add_item.dart';
 import '../models/load_list_repository.dart';
@@ -20,13 +22,14 @@ class _HomePageState extends State<HomePage> {
   final LoginData loginData = LoginData();
 
   final List<ItemList> fixedList = FixedList().fixedList;
+  List<TaskList> taskList = TaskListRepository.instance.table;
   late ListRepository listRepository;
   List<Item> loadList = [];
 
   @override
   void initState() {
     super.initState();
-    listRepository = ListRepository();
+    listRepository = ListRepository.instance;
     loadList = listRepository.loadList;
   }
 
@@ -85,13 +88,16 @@ class _HomePageState extends State<HomePage> {
                                 title: Text(subList[i].name),
                                 leading:
                                     Icon(Icons.list, color: subList[i].color),
-                                trailing: const Text('0'),
+                                trailing: Text(
+                                    taskCountFilter(subList, i).toString()),
                                 onTap: () {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) =>
-                                          Inbox(listItem: subList[i]),
+                                      builder: (context) => Inbox(
+                                        listItem: subList[i],
+                                        onSave: updateList,
+                                      ),
                                     ),
                                   );
                                 },
@@ -103,13 +109,16 @@ class _HomePageState extends State<HomePage> {
                     : ListTile(
                         title: Text(loadList[index].name),
                         leading: Icon(Icons.list, color: loadList[index].color),
-                        trailing: const Text('0'),
+                        trailing:
+                            Text(taskCountFilter(loadList, index).toString()),
                         onTap: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  Inbox(listItem: loadList[index]),
+                              builder: (context) => Inbox(
+                                listItem: loadList[index],
+                                onSave: updateList,
+                              ),
                             ),
                           );
                         },
@@ -131,7 +140,6 @@ class _HomePageState extends State<HomePage> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => AddItem(
-                          listRepository: listRepository,
                           type: ItemType.LIST,
                           onSave: updateList,
                         ),
@@ -162,7 +170,6 @@ class _HomePageState extends State<HomePage> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => AddItem(
-                          listRepository: listRepository,
                           type: ItemType.FOLDER,
                           onSave: updateList,
                         ),
@@ -180,7 +187,14 @@ class _HomePageState extends State<HomePage> {
   void updateList() {
     setState(() {
       loadList = listRepository.loadList;
-      loadList.forEach((element) => print(element.name));
+      taskList = TaskListRepository.instance.table;
     });
+  }
+
+  int taskCountFilter(var list, int index) {
+    return taskList
+        .where((element) => element.listId == list[index].id)
+        .where((element) => element.finished == false)
+        .length;
   }
 }

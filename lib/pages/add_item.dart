@@ -7,13 +7,12 @@ import 'package:todo/repositories/list_repository.dart';
 class AddItem extends StatelessWidget {
   AddItem({
     Key? key,
-    required this.listRepository,
     required this.type,
     required this.onSave,
   }) : super(key: key) {
     nameType = type == ItemType.FOLDER ? 'Pasta' : 'Lista';
   }
-  ListRepository listRepository;
+  ListRepository listRepository = ListRepository.instance;
   final ItemType type;
   late String nameType;
   Color currentColor = Colors.amber;
