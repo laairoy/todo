@@ -1,13 +1,13 @@
 class TaskList {
-  var icon;
   String date;
   String name;
+  String note;
   var finished;
   int listId;
 
   TaskList({
-    required this.icon,
     required this.name,
+    required this.note,
     required this.date,
     required this.finished,
     required this.listId,
