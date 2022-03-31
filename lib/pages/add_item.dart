@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:todo/models/load_list_repository.dart';
@@ -12,12 +14,14 @@ class AddItem extends StatelessWidget {
   }) : super(key: key) {
     nameType = type == ItemType.FOLDER ? 'Pasta' : 'Lista';
   }
+
   ListRepository listRepository = ListRepository.instance;
   final ItemType type;
   late String nameType;
   Color currentColor = Colors.amber;
   final _formKey = GlobalKey<FormState>();
   String name = '';
+  int folderId = -1;
 
   final void Function() onSave;
 
@@ -32,7 +36,7 @@ class AddItem extends StatelessWidget {
         title: Text('Adicionar $nameType'),
       ),
       body: Container(
-        padding: EdgeInsets.all(5),
+        padding: EdgeInsets.all(20),
         child: Form(
           key: _formKey,
           child: Column(
@@ -40,7 +44,6 @@ class AddItem extends StatelessWidget {
               TextFormField(
                 initialValue: '',
                 decoration: InputDecoration(
-                  //hintText: 'digite o nome',
                   label: Text('Nome'),
                 ),
                 onSaved: (value) {
@@ -52,9 +55,29 @@ class AddItem extends StatelessWidget {
                   }
                 },
               ),
+              if (type == ItemType.LIST)
+                Padding(
+                  padding: const EdgeInsets.only(top: 20.0),
+                  child: DropdownButtonFormField(
+                    decoration: InputDecoration(
+                      label: Text('Pasta'),
+                    ),
+                    items: listRepository.loadList
+                        .where((element) => element.type == ItemType.FOLDER)
+                        .map((e) {
+                      return DropdownMenuItem(
+                        child: Text(e.name),
+                        value: e.id,
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      folderId = value as int;
+                    },
+                  ),
+                ),
               Expanded(
-                child: Container(
-                  margin: EdgeInsets.only(top: 10),
+                child: Padding(
+                  padding: EdgeInsets.only(top: 20),
                   child: HueRingPicker(
                     colorPickerHeight: 200,
                     pickerColor: currentColor,
@@ -80,8 +103,14 @@ class AddItem extends StatelessWidget {
                               id: loadList.length,
                               name: name,
                               color: currentColor);
-                      loadList.add(item);
-                      loadList.forEach((element) => print(element.name));
+                      if (folderId == -1) {
+                        loadList.add(item);
+                      } else {
+                        (loadList.firstWhere((element) => element.id == folderId) as FolderItem)
+                            .iList
+                            .add(item as ListItem);
+                      }
+
                       onSave();
                       Navigator.pop(context);
                     }
