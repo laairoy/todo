@@ -9,12 +9,26 @@ import 'package:todo/models/login_data.dart';
 import 'add_item.dart';
 import '../models/load_list_repository.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   HomePage({Key? key}) : super(key: key);
 
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   final LoginData loginData = LoginData();
+
   final List<ItemList> fixedList = FixedList().fixedList;
-  final List<Item> loadList = ListRepository().loadList;
+  late ListRepository listRepository;
+  List<Item> loadList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    listRepository = ListRepository();
+    loadList = listRepository.loadList;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -116,7 +130,11 @@ class HomePage extends StatelessWidget {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => AddItem(type: ItemType.LIST),
+                        builder: (context) => AddItem(
+                          listRepository: listRepository,
+                          type: ItemType.LIST,
+                          onSave: updateList,
+                        ),
                       ));
                 },
                 child: Row(
@@ -143,7 +161,11 @@ class HomePage extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => AddItem(type: ItemType.FOLDER),
+                        builder: (context) => AddItem(
+                          listRepository: listRepository,
+                          type: ItemType.FOLDER,
+                          onSave: updateList,
+                        ),
                       ),
                     );
                   },
@@ -153,5 +175,12 @@ class HomePage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void updateList() {
+    setState(() {
+      loadList = listRepository.loadList;
+      loadList.forEach((element) => print(element.name));
+    });
   }
 }

@@ -4,6 +4,7 @@ import 'package:todo/repositories/task_list_repository.dart';
 
 class Inbox extends StatefulWidget {
   late Item listItem;
+
   Inbox({Key? key, required this.listItem}) : super(key: key);
 
   @override
@@ -13,7 +14,10 @@ class Inbox extends StatefulWidget {
 class _InboxState extends State<Inbox> {
   @override
   Widget build(BuildContext context) {
-    final table = TaskListRepository.table.where((element) => element.listId == widget.listItem.id).toList();
+    final table = TaskListRepository.table
+        .where((element) => element.listId == widget.listItem.id)
+        .where((element) => element.finished == false)
+        .toList();
 
     return Scaffold(
       appBar: AppBar(
