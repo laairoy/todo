@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:todo/cadastrar.dart';
 import 'package:todo/models/item_list.dart';
@@ -20,7 +19,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final LoginData loginData = LoginData();
+  LoginData loginData = LoginData();
 
   final List<ItemList> fixedList = FixedList().fixedList;
   List<TaskList> taskList = TaskListRepository.instance.table;
@@ -87,7 +86,8 @@ class _HomePageState extends State<HomePage> {
                               itemBuilder: (BuildContext context, int i) {
                                 List<ListItem> subList =
                                     (loadList[index] as FolderItem).iList;
-                                return buildListTile(subList, i, context, folderId: index);
+                                return buildListTile(subList, i, context,
+                                    folderId: index);
                               },
                             ),
                           ],
@@ -140,7 +140,8 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  ListTile buildListTile(var list, int i, BuildContext context, {int? folderId}) {
+  ListTile buildListTile(var list, int i, BuildContext context,
+      {int? folderId}) {
     return ListTile(
       title: Text(list[i].name),
       leading: Icon(Icons.list, color: list[i].color),
@@ -168,8 +169,12 @@ class _HomePageState extends State<HomePage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) =>
-            AddItem(type: type, onSave: updateList, id: id, currFolderId: folderId,),
+        builder: (context) => AddItem(
+          type: type,
+          onSave: updateList,
+          id: id,
+          currFolderId: folderId,
+        ),
       ),
     );
   }

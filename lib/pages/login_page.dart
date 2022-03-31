@@ -32,7 +32,10 @@ class LoginPage extends StatelessWidget {
                 height: 50,
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pushNamedAndRemoveUntil(
+                        context, '/home', ModalRoute.withName('/home'));
+                  },
                   child: const Text('Logar'),
                 ),
               ),
