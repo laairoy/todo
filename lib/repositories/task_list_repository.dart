@@ -11,6 +11,7 @@ class TaskListRepository {
         Icons.circle,
         color: Color.fromARGB(255, 241, 245, 241),
       ),
+      listId: 1,
     ),
     TaskList(
       name: 'Correr',
@@ -20,6 +21,7 @@ class TaskListRepository {
         Icons.circle,
         color: Color.fromARGB(255, 241, 245, 241),
       ),
+      listId: 1,
     ),
     TaskList(
       name: 'varrer a casa',
@@ -29,6 +31,7 @@ class TaskListRepository {
         Icons.circle,
         color: Color.fromARGB(255, 241, 245, 241),
       ),
+      listId: 1,
     ),
   ];
 }

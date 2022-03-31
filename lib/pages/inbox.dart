@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:todo/models/load_list_repository.dart';
 import 'package:todo/repositories/task_list_repository.dart';
 
 class Inbox extends StatefulWidget {
-  Inbox({Key? key}) : super(key: key);
+  late Item listItem;
+  Inbox({Key? key, required this.listItem}) : super(key: key);
 
   @override
   State<Inbox> createState() => _InboxState();
@@ -11,11 +13,11 @@ class Inbox extends StatefulWidget {
 class _InboxState extends State<Inbox> {
   @override
   Widget build(BuildContext context) {
-    final table = TaskListRepository.table;
+    final table = TaskListRepository.table.where((element) => element.listId == widget.listItem.id).toList();
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Caixa de entrada'),
+        title: Text(widget.listItem.name),
       ),
       body: ListView.builder(
         itemCount: table.length,

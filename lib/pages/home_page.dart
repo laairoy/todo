@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todo/cadastrar.dart';
 import 'package:todo/models/item_list.dart';
 import 'package:todo/repositories/fixed_list_repository.dart';
 import 'package:todo/pages/inbox.dart';
@@ -75,7 +76,8 @@ class HomePage extends StatelessWidget {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => Inbox(),
+                                      builder: (context) =>
+                                          Inbox(listItem: subList[i]),
                                     ),
                                   );
                                 },
@@ -92,7 +94,8 @@ class HomePage extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => Inbox(),
+                              builder: (context) =>
+                                  Inbox(listItem: loadList[index]),
                             ),
                           );
                         },
@@ -128,7 +131,12 @@ class HomePage extends StatelessWidget {
               ),
               const Spacer(),
               IconButton(
-                  onPressed: () => {},
+                  onPressed: () => {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Cadastrar()))
+                      },
                   icon: const Icon(Icons.bookmark_add)),
               IconButton(
                   onPressed: () {
