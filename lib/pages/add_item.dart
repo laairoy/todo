@@ -136,9 +136,16 @@ class AddItem extends StatelessWidget {
                           if (loadList[currFolderId].id == folderId) {
                             var iList =
                                 (loadList[currFolderId] as FolderItem).iList;
-                            print(iList[id].name);
                             iList[id].name = name;
                             iList[id].color = currentColor;
+                          } else {
+                            ListItem listItem =
+                                (loadList[currFolderId] as FolderItem).iList.removeAt(id);
+                            (loadList.firstWhere(
+                                        (element) => element.id == folderId)
+                                    as FolderItem)
+                                .iList
+                                .add(listItem);
                           }
                         } else {
                           (loadList.firstWhere(
@@ -153,7 +160,7 @@ class AddItem extends StatelessWidget {
                       Navigator.pop(context);
                     }
                   },
-                  child: Text('Criar $nameType'),
+                  child: Text('Salvar $nameType'),
                 ),
               ),
             ],
