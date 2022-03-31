@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:todo/cadastrar.dart';
 import 'package:todo/models/item_list.dart';
@@ -70,59 +71,29 @@ class _HomePageState extends State<HomePage> {
               itemCount: loadList.length,
               itemBuilder: (context, int index) {
                 return loadList[index].type == ItemType.FOLDER
-                    ? ExpansionTile(
-                        title: Text(loadList[index].name),
-                        leading:
-                            Icon(Icons.folder, color: loadList[index].color),
-                        childrenPadding: const EdgeInsets.only(left: 10),
-                        children: [
-                          ListView.builder(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount:
-                                (loadList[index] as FolderItem).iList.length,
-                            itemBuilder: (BuildContext context, int i) {
-                              List<ListItem> subList =
-                                  (loadList[index] as FolderItem).iList;
-                              return ListTile(
-                                title: Text(subList[i].name),
-                                leading:
-                                    Icon(Icons.list, color: subList[i].color),
-                                trailing: Text(
-                                    taskCountFilter(subList, i).toString()),
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => Inbox(
-                                        listItem: subList[i],
-                                        onSave: updateList,
-                                      ),
-                                    ),
-                                  );
-                                },
-                              );
-                            },
-                          ),
-                        ],
-                      )
-                    : ListTile(
-                        title: Text(loadList[index].name),
-                        leading: Icon(Icons.list, color: loadList[index].color),
-                        trailing:
-                            Text(taskCountFilter(loadList, index).toString()),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => Inbox(
-                                listItem: loadList[index],
-                                onSave: updateList,
-                              ),
+                    ? GestureDetector(
+                        onLongPress: () => print('ola'),
+                        child: ExpansionTile(
+                          title: Text(loadList[index].name),
+                          leading:
+                              Icon(Icons.folder, color: loadList[index].color),
+                          childrenPadding: const EdgeInsets.only(left: 10),
+                          children: [
+                            ListView.builder(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount:
+                                  (loadList[index] as FolderItem).iList.length,
+                              itemBuilder: (BuildContext context, int i) {
+                                List<ListItem> subList =
+                                    (loadList[index] as FolderItem).iList;
+                                return buildListTile(subList, i, context, folderId: index);
+                              },
                             ),
-                          );
-                        },
-                      );
+                          ],
+                        ),
+                      )
+                    : buildListTile(loadList, index, context);
               },
             ),
           ],
@@ -136,14 +107,7 @@ class _HomePageState extends State<HomePage> {
             children: [
               InkWell(
                 onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => AddItem(
-                          type: ItemType.LIST,
-                          onSave: updateList,
-                        ),
-                      ));
+                  openAddItem(context, ItemType.LIST);
                 },
                 child: Row(
                   children: const [
@@ -166,20 +130,46 @@ class _HomePageState extends State<HomePage> {
                   icon: const Icon(Icons.bookmark_add)),
               IconButton(
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => AddItem(
-                          type: ItemType.FOLDER,
-                          onSave: updateList,
-                        ),
-                      ),
-                    );
+                    openAddItem(context, ItemType.FOLDER);
                   },
                   icon: const Icon(Icons.create_new_folder)),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  ListTile buildListTile(var list, int i, BuildContext context, {int? folderId}) {
+    return ListTile(
+      title: Text(list[i].name),
+      leading: Icon(Icons.list, color: list[i].color),
+      trailing: Text(taskCountFilter(list, i).toString()),
+      onLongPress: () {
+        openAddItem(context, ItemType.LIST, id: i, folderId: folderId);
+      },
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Inbox(
+              listItem: list[i],
+              onSave: updateList,
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void openAddItem(BuildContext context, ItemType type,
+      {int? id, int? folderId}) {
+    print(folderId);
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            AddItem(type: type, onSave: updateList, id: id, currFolderId: folderId,),
       ),
     );
   }

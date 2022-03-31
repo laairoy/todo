@@ -11,13 +11,21 @@ class AddItem extends StatelessWidget {
     Key? key,
     required this.type,
     required this.onSave,
+    int? id,
+    int? currFolderId,
   }) : super(key: key) {
     nameType = type == ItemType.FOLDER ? 'Pasta' : 'Lista';
+    this.id = id ?? -1;
+    this.currFolderId = currFolderId ?? -1;
+    folderId = this.currFolderId == -1 ? -1 : loadList[this.currFolderId].id;
+    currentColor = this.id == -1 ? Colors.amber : loadList[id!].color;
   }
 
-  ListRepository listRepository = ListRepository.instance;
+  List<Item> loadList = ListRepository.instance.loadList;
   final ItemType type;
   late String nameType;
+  var id;
+  var currFolderId;
   Color currentColor = Colors.amber;
   final _formKey = GlobalKey<FormState>();
   String name = '';
@@ -42,12 +50,16 @@ class AddItem extends StatelessWidget {
           child: Column(
             children: [
               TextFormField(
-                initialValue: '',
+                initialValue: id != -1
+                    ? (currFolderId != -1
+                        ? (loadList[currFolderId] as FolderItem).iList[id].name
+                        : loadList[id].name)
+                    : '',
                 decoration: InputDecoration(
                   label: Text('Nome'),
                 ),
                 onSaved: (value) {
-                  name = value ?? '';
+                  name = value!;
                 },
                 validator: (value) {
                   if (value!.isEmpty) {
@@ -62,7 +74,7 @@ class AddItem extends StatelessWidget {
                     decoration: InputDecoration(
                       label: Text('Pasta'),
                     ),
-                    items: listRepository.loadList
+                    items: loadList
                         .where((element) => element.type == ItemType.FOLDER)
                         .map((e) {
                       return DropdownMenuItem(
@@ -73,9 +85,11 @@ class AddItem extends StatelessWidget {
                             padding: EdgeInsets.only(left: 10),
                           )
                         ]),
-                        value: e.id,
+                        value: (e.id),
                       );
                     }).toList(),
+                    value:
+                        currFolderId != -1 ? loadList[currFolderId].id : null,
                     onChanged: (value) {
                       folderId = value as int;
                     },
@@ -98,7 +112,6 @@ class AddItem extends StatelessWidget {
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
                       _formKey.currentState!.save();
-                      var loadList = listRepository.loadList;
                       Item item = type == ItemType.FOLDER
                           ? FolderItem(
                               id: loadList.length,
@@ -110,13 +123,30 @@ class AddItem extends StatelessWidget {
                               name: name,
                               color: currentColor);
                       if (folderId == -1) {
-                        loadList.add(item);
+                        if (id != -1) {
+                          loadList[id].name = name;
+                          loadList[id].color = currentColor;
+                        } else {
+                          loadList.add(item);
+                        }
                       } else {
-                        (loadList.firstWhere(
-                                    (element) => element.id == folderId)
-                                as FolderItem)
-                            .iList
-                            .add(item as ListItem);
+                        if (id != -1) {
+                          print(folderId);
+                          print(loadList[currFolderId].id);
+                          if (loadList[currFolderId].id == folderId) {
+                            var iList =
+                                (loadList[currFolderId] as FolderItem).iList;
+                            print(iList[id].name);
+                            iList[id].name = name;
+                            iList[id].color = currentColor;
+                          }
+                        } else {
+                          (loadList.firstWhere(
+                                      (element) => element.id == folderId)
+                                  as FolderItem)
+                              .iList
+                              .add(item as ListItem);
+                        }
                       }
 
                       onSave();
