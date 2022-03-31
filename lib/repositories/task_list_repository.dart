@@ -6,7 +6,7 @@ class TaskListRepository {
     TaskList(
       name: 'Estudar',
       date: '10/05/22',
-      finished: true,
+      finished: false,
       icon: const Icon(
         Icons.circle,
         color: Color.fromARGB(255, 241, 245, 241),
