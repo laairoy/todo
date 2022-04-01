@@ -56,19 +56,22 @@ class _HomePageState extends State<HomePage> {
                 ListTile(
                   title: Text('Hoje'),
                   leading: Icon(Icons.sunny, color: Colors.green),
-                  trailing: Text(filterTable(FixedListType.HOJE).length.toString()),
+                  trailing:
+                      Text(filterTable(FixedListType.HOJE).length.toString()),
                   onTap: () => openDateFilter(FixedListType.HOJE, 'Hoje'),
                 ),
                 ListTile(
                   title: Text('Amanhã'),
                   leading: Icon(Icons.wb_twilight, color: Colors.redAccent),
-                  trailing: Text(filterTable(FixedListType.AMANHA).length.toString()),
+                  trailing:
+                      Text(filterTable(FixedListType.AMANHA).length.toString()),
                   onTap: () => openDateFilter(FixedListType.AMANHA, 'Amanha'),
                 ),
                 ListTile(
                   title: Text('Em Breve'),
                   leading: Icon(Icons.calendar_month, color: Colors.blueAccent),
-                  trailing: Text(filterTable(FixedListType.EMBREVE).length.toString()),
+                  trailing: Text(
+                      filterTable(FixedListType.EMBREVE).length.toString()),
                   onTap: () =>
                       openDateFilter(FixedListType.EMBREVE, 'Em Breve'),
                 ),
@@ -76,7 +79,8 @@ class _HomePageState extends State<HomePage> {
                   title: Text('Algum Dia'),
                   leading: Icon(Icons.calendar_today,
                       color: Colors.deepPurpleAccent),
-                  trailing: Text(filterTable(FixedListType.ALGUMDIA).length.toString()),
+                  trailing: Text(
+                      filterTable(FixedListType.ALGUMDIA).length.toString()),
                   onTap: () =>
                       openDateFilter(FixedListType.ALGUMDIA, 'Algum Dia'),
                 ),
@@ -89,7 +93,8 @@ class _HomePageState extends State<HomePage> {
               itemBuilder: (context, int index) {
                 return loadList[index].type == ItemType.FOLDER
                     ? GestureDetector(
-                        onLongPress: () => print('ola'),
+                        onLongPress: () => openAddItem(context, ItemType.FOLDER,
+                            id: index),
                         child: ExpansionTile(
                           title: Text(loadList[index].name),
                           leading:
@@ -183,8 +188,11 @@ class _HomePageState extends State<HomePage> {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) =>
-                TimeTaskList(type: type, title: title,filterTable: filterTable, onSave: updateList)));
+            builder: (context) => TimeTaskList(
+                type: type,
+                title: title,
+                filterTable: filterTable,
+                onSave: updateList)));
   }
 
   void openAddItem(BuildContext context, ItemType type,
