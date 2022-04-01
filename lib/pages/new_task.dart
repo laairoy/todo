@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:todo/models/load_list_repository.dart';
 import 'package:todo/models/task_list.dart';
 import 'package:todo/repositories/task_list_repository.dart';
+import 'package:intl/intl.dart';
+import 'package:date_format/date_format.dart';
 
 class NewTask extends StatelessWidget {
   NewTask({Key? key, required this.listId, required this.onSave})
@@ -50,7 +52,9 @@ class NewTask extends StatelessWidget {
                           initialDate: DateTime.now(),
                           firstDate: DateTime(1900),
                           lastDate: DateTime(2100));
-                      _dateController.text = date.toString().substring(0, 10);
+                      _dateController.text = formatDate(
+                          DateTime.parse(date.toString()),
+                          [dd, '/', mm, '/', yyyy]);
                     },
                   ),
                 ),
