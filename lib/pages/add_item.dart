@@ -41,6 +41,7 @@ class AddItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text('Adicionar $nameType'),
       ),
@@ -131,7 +132,16 @@ class AddItem extends StatelessWidget {
                           loadList.add(item);
                         }
                       } else {
-                        if (id != -1) {
+                        if(id != -1 && currFolderId == -1){
+                          ListItem listItem =
+                          loadList.removeAt(id) as ListItem;
+                          (loadList.firstWhere(
+                                  (element) => element.id == folderId)
+                          as FolderItem)
+                              .iList
+                              .add(listItem);
+                        }
+                        else if (id != -1) {
                           print(folderId);
                           print(loadList[currFolderId].id);
                           if (loadList[currFolderId].id == folderId) {
