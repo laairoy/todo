@@ -6,6 +6,7 @@ import 'package:todo/pages/time_task.dart';
 import 'package:todo/repositories/list_repository.dart';
 import 'package:todo/models/login_data.dart';
 import 'package:todo/repositories/task_list_repository.dart';
+import 'package:date_format/date_format.dart';
 
 import 'add_item.dart';
 import '../models/load_list_repository.dart';
@@ -93,8 +94,8 @@ class _HomePageState extends State<HomePage> {
               itemBuilder: (context, int index) {
                 return loadList[index].type == ItemType.FOLDER
                     ? GestureDetector(
-                        onLongPress: () => openAddItem(context, ItemType.FOLDER,
-                            id: index),
+                        onLongPress: () =>
+                            openAddItem(context, ItemType.FOLDER, id: index),
                         child: ExpansionTile(
                           title: Text(loadList[index].name),
                           leading:
@@ -231,7 +232,8 @@ class _HomePageState extends State<HomePage> {
         {
           return TaskListRepository.instance.table
               .where((element) =>
-                  element.date == DateTime.now().toString().substring(0, 10))
+                  element.date ==
+                  formatDate(DateTime.now(), [dd, '/', mm, '/', yyyy]))
               .where((element) => element.finished == false)
               .toList();
         }
@@ -240,10 +242,7 @@ class _HomePageState extends State<HomePage> {
           return TaskListRepository.instance.table
               .where((element) =>
                   element.date ==
-                  DateTime.now()
-                      .add(Duration(days: 1))
-                      .toString()
-                      .substring(0, 10))
+                      formatDate(DateTime.now().add(Duration(days: 1)), [dd, '/', mm, '/', yyyy]))
               .where((element) => element.finished == false)
               .toList();
         }

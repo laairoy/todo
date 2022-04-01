@@ -12,21 +12,21 @@ class TaskListRepository {
     table = [
       TaskList(
         name: 'Estudar',
-        date: '10/05/22',
+        date: '10/05/2022',
         note: 'pampampam',
         finished: false,
         listId: 1,
       ),
       TaskList(
         name: 'Correr',
-        date: '11/05/22',
+        date: '11/05/2022',
         note: 'punpunpun',
         finished: false,
         listId: 1,
       ),
       TaskList(
         name: 'varrer a casa',
-        date: '12/06/23',
+        date: '12/06/2023',
         note: 'parapapapapara',
         finished: true,
         listId: 1,
