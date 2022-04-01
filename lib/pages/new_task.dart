@@ -51,7 +51,7 @@ class _NewTaskState extends State<NewTask> {
               ),
               ElevatedButton(
                   onPressed: () {
-                    print(table[2].name);
+                    //  print(table[2].name);
                     //   print(table[4].name);
                     //    print(table[9].name);
                     table.add(TaskList(
@@ -61,7 +61,7 @@ class _NewTaskState extends State<NewTask> {
                         finished: 'false',
                         listId: 1));
                   },
-                  child: Text('Enviar')),
+                  child: Text('Salvar')),
             ],
           ),
         ));
