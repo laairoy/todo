@@ -4,12 +4,13 @@ import 'package:todo/models/task_list.dart';
 import 'package:todo/repositories/task_list_repository.dart';
 
 class NewTask extends StatelessWidget {
-  NewTask({Key? key, required this.listId, required this.onSave })
+  NewTask({Key? key, required this.listId, required this.onSave})
       : super(key: key);
 
   int listId;
   final void Function() onSave;
   List<TaskList> table = TaskListRepository.instance.table;
+  final _formKey = GlobalKey<FormState>();
   TextEditingController _nameController = TextEditingController();
   TextEditingController _dateController = TextEditingController();
   TextEditingController _noteController = TextEditingController();
@@ -22,46 +23,73 @@ class NewTask extends StatelessWidget {
           title: Text('Criar nova tarefa'),
         ),
         body: Padding(
-          padding: const EdgeInsets.all(10.1),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TextField(
-                controller: _nameController,
-                decoration: InputDecoration(labelText: 'Nome da tarefa'),
-              ),
-//            Text('Data'),
-              SizedBox(
-                height: 10,
-              ),
-              TextField(
-                controller: _dateController,
-                decoration: InputDecoration(labelText: 'Data'),
-                keyboardType: TextInputType.datetime,
-              ),
-              Expanded(child: SizedBox()),
-              TextField(
-                controller: _noteController,
-                maxLines: 4,
-                decoration: InputDecoration(
-                    labelText: 'Adicionar Nota', border: OutlineInputBorder()),
-              ),
-              ElevatedButton(
-                  onPressed: () {
-                    //  print(table[2].name);
-                    //   print(table[4].name);
-                    //    print(table[9].name);
-                    TaskListRepository.instance.table.add(TaskList(
-                        name: _nameController.text,
-                        note: _noteController.text,
-                        date: _dateController.text,
-                        finished: false,
-                        listId: listId));
-                    onSave();
-                    Navigator.pop(context);
+          padding: const EdgeInsets.all(10),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                TextFormField(
+                  controller: _nameController,
+                  decoration: InputDecoration(labelText: 'Nome da tarefa'),
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Digite um nome válido';
+                    }
                   },
-                  child: Text('Salvar')),
-            ],
+                ),
+//            Text('Data'),
+                Padding(
+                  padding: EdgeInsets.only(top: 10),
+                  child: TextFormField(
+                    controller: _dateController,
+                    decoration: InputDecoration(labelText: 'Data'),
+                    readOnly: true,
+                    onTap: () async {
+                      var date = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime(1900),
+                          lastDate: DateTime(2100));
+                      _dateController.text = date.toString().substring(0, 10);
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top: 10),
+                  child: Expanded(
+                    child: TextFormField(
+                      controller: _noteController,
+                      maxLines: 4,
+                      decoration: InputDecoration(
+                          labelText: 'Adicionar Nota',
+                          border: OutlineInputBorder()),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top: 10),
+                  child: SizedBox(
+                    height: 50,
+                    width: double.infinity,
+                    child: ElevatedButton(
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {
+                            _formKey.currentState!.save();
+                            TaskListRepository.instance.table.add(TaskList(
+                                name: _nameController.text,
+                                note: _noteController.text,
+                                date: _dateController.text,
+                                finished: false,
+                                listId: listId));
+                            onSave();
+                            Navigator.pop(context);
+                          }
+                        },
+                        child: Text('Salvar')),
+                  ),
+                ),
+              ],
+            ),
           ),
         ));
   }

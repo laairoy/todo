@@ -31,6 +31,7 @@ class _InboxState extends State<Inbox> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
         onPressed: () {
           Navigator.push(
             context,
@@ -43,28 +44,30 @@ class _InboxState extends State<Inbox> {
           );
         },
         backgroundColor: Color.fromARGB(255, 83, 83, 83),
-        child: const Icon(Icons.navigation),
       ),
       appBar: AppBar(
         title: Text(widget.listItem.name),
       ),
-      body: ListView.builder(
-        itemCount: table.length,
-        itemBuilder: (BuildContext context, int task) {
-          return CheckboxListTile(
-            //   leading: table[task].icon,
-            title: Text(table[task].name),
-            subtitle: Text(table[task].date),
-            controlAffinity: ListTileControlAffinity.leading,
-            //   trailing: Text(table[task].date),
-            key: Key(table[task].name),
-            value: table[task].finished,
-            onChanged: (value) {
-              table[task].finished = value;
-              updateState();
-            },
-          );
-        },
+      body: Padding(
+        padding: EdgeInsets.only(top: 10),
+        child: ListView.builder(
+          itemCount: table.length,
+          itemBuilder: (BuildContext context, int task) {
+            return CheckboxListTile(
+              //   leading: table[task].icon,
+              title: Text(table[task].name),
+              subtitle: Text(table[task].date),
+              controlAffinity: ListTileControlAffinity.leading,
+              //   trailing: Text(table[task].date),
+              key: Key(table[task].name),
+              value: table[task].finished,
+              onChanged: (value) {
+                table[task].finished = value;
+                updateState();
+              },
+            );
+          },
+        ),
       ),
     );
   }

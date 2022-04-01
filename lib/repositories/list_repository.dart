@@ -4,6 +4,8 @@ import 'package:todo/models/load_list_repository.dart';
 class ListRepository {
   static final ListRepository _instance = ListRepository._();
   List<Item> loadList = [];
+  int _count = 8;
+  int get count => _count++;
 
   static ListRepository get instance => _instance;
 

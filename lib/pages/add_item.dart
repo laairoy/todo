@@ -22,6 +22,7 @@ class AddItem extends StatelessWidget {
   }
 
   List<Item> loadList = ListRepository.instance.loadList;
+  int newId = ListRepository.instance.count;
   final ItemType type;
   late String nameType;
   var id;
@@ -114,12 +115,12 @@ class AddItem extends StatelessWidget {
                       _formKey.currentState!.save();
                       Item item = type == ItemType.FOLDER
                           ? FolderItem(
-                              id: loadList.length,
+                              id: newId,
                               name: name,
                               color: currentColor,
                               iList: [])
                           : ListItem(
-                              id: loadList.length,
+                              id: newId,
                               name: name,
                               color: currentColor);
                       if (folderId == -1) {

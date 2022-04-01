@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:todo/pages/cadastrar_page.dart';
+import 'package:email_validator/email_validator.dart';
+
 
 class LoginPage extends StatelessWidget {
   LoginPage({Key? key}) : super(key: key);
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -13,6 +16,7 @@ class LoginPage extends StatelessWidget {
       body: Container(
         padding: EdgeInsets.all(10),
         child: Form(
+          key: _formKey,
           child: Column(
             children: [
               TextFormField(
@@ -20,6 +24,14 @@ class LoginPage extends StatelessWidget {
                   hintText: 'digite seu email!',
                   label: Text('Email'),
                 ),
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Digite um email!';
+                  }
+                  else if(EmailValidator.validate(value) == false ){
+                    return 'Email inválido!' ;
+                  }
+                },
               ),
               Padding(
                 padding: EdgeInsets.only(top: 20),
@@ -28,6 +40,11 @@ class LoginPage extends StatelessWidget {
                     hintText: 'digita a senha!',
                     label: Text('Senha'),
                   ),
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Digite sua senha!';
+                    }
+                  },
                   obscureText: true,
                 ),
               ),
@@ -38,8 +55,11 @@ class LoginPage extends StatelessWidget {
                   width: double.infinity,
                   child: ElevatedButton(
                     onPressed: () {
-                      Navigator.pushNamedAndRemoveUntil(
-                          context, '/home', ModalRoute.withName('/home'));
+                      if (_formKey.currentState!.validate()) {
+                        _formKey.currentState!.save();
+                        Navigator.pushNamedAndRemoveUntil(
+                            context, '/home', ModalRoute.withName('/home'));
+                      }
                     },
                     child: const Text('Logar'),
                   ),
