@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:todo/models/load_list_repository.dart';
 import 'package:todo/models/task_list.dart';
 import 'package:todo/repositories/task_list_repository.dart';
-import 'package:flutter/material.dart';
-import 'package:todo/models/load_list_repository.dart';
-import 'package:todo/repositories/task_list_repository.dart';
 
 class NewTask extends StatefulWidget {
   final void Function() onSave;
