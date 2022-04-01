@@ -45,7 +45,7 @@ class AddItem extends StatelessWidget {
         title: Text('Adicionar $nameType'),
       ),
       body: Padding(
-        padding: EdgeInsets.all(20),
+        padding: EdgeInsets.all(10),
         child: Form(
           key: _formKey,
           child: Column(

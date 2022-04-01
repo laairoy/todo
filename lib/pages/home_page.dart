@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:todo/models/item_list.dart';
+import 'package:todo/models/fixed_list_type.dart';
 import 'package:todo/models/task_list.dart';
-import 'package:todo/repositories/fixed_list_repository.dart';
 import 'package:todo/pages/inbox.dart';
+import 'package:todo/pages/time_task.dart';
 import 'package:todo/repositories/list_repository.dart';
 import 'package:todo/models/login_data.dart';
 import 'package:todo/repositories/task_list_repository.dart';
 
-import '../login.dart';
 import 'add_item.dart';
 import '../models/load_list_repository.dart';
 
@@ -21,7 +20,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   LoginData loginData = LoginData();
 
-  final List<ItemList> fixedList = FixedList().fixedList;
   List<TaskList> taskList = TaskListRepository.instance.table;
   late ListRepository listRepository;
   List<Item> loadList = [];
@@ -51,18 +49,38 @@ class _HomePageState extends State<HomePage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            ListView.builder(
+            ListView(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              itemCount: fixedList.length,
-              itemBuilder: (context, int index) {
-                return ListTile(
-                  title: Text(fixedList[index].title),
-                  leading: fixedList[index].icon,
-                  trailing: const Text('0'),
-                  onTap: () => {},
-                );
-              },
+              children: [
+                ListTile(
+                  title: Text('Hoje'),
+                  leading: Icon(Icons.sunny, color: Colors.green),
+                  trailing: Text(filterTable(FixedListType.HOJE).length.toString()),
+                  onTap: () => openDateFilter(FixedListType.HOJE, 'Hoje'),
+                ),
+                ListTile(
+                  title: Text('Amanhã'),
+                  leading: Icon(Icons.wb_twilight, color: Colors.redAccent),
+                  trailing: Text(filterTable(FixedListType.AMANHA).length.toString()),
+                  onTap: () => openDateFilter(FixedListType.AMANHA, 'Amanha'),
+                ),
+                ListTile(
+                  title: Text('Em Breve'),
+                  leading: Icon(Icons.calendar_month, color: Colors.blueAccent),
+                  trailing: Text(filterTable(FixedListType.EMBREVE).length.toString()),
+                  onTap: () =>
+                      openDateFilter(FixedListType.EMBREVE, 'Em Breve'),
+                ),
+                ListTile(
+                  title: Text('Algum Dia'),
+                  leading: Icon(Icons.calendar_today,
+                      color: Colors.deepPurpleAccent),
+                  trailing: Text(filterTable(FixedListType.ALGUMDIA).length.toString()),
+                  onTap: () =>
+                      openDateFilter(FixedListType.ALGUMDIA, 'Algum Dia'),
+                ),
+              ],
             ),
             ListView.builder(
               shrinkWrap: true,
@@ -109,25 +127,23 @@ class _HomePageState extends State<HomePage> {
                 onTap: () {
                   openAddItem(context, ItemType.LIST);
                 },
-                child: Row(
-                  children: const [
-                    Icon(Icons.add),
-                    Text(
-                      'Nova Lista',
-                      style: TextStyle(fontSize: 20),
-                    ),
-                  ],
+                child: Padding(
+                  padding: EdgeInsets.all(10),
+                  child: Row(
+                    children: const [
+                      Icon(Icons.add),
+                      Padding(
+                        padding: EdgeInsets.only(left: 10),
+                        child: Text(
+                          'Nova Lista',
+                          style: TextStyle(fontSize: 20),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
               const Spacer(),
-              IconButton(
-                  onPressed: () => {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => Login()))
-                      },
-                  icon: const Icon(Icons.bookmark_add)),
               IconButton(
                   onPressed: () {
                     openAddItem(context, ItemType.FOLDER);
@@ -163,6 +179,14 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  void openDateFilter(FixedListType type, String title) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) =>
+                TimeTaskList(type: type, title: title,filterTable: filterTable, onSave: updateList)));
+  }
+
   void openAddItem(BuildContext context, ItemType type,
       {int? id, int? folderId}) {
     print(folderId);
@@ -191,5 +215,41 @@ class _HomePageState extends State<HomePage> {
         .where((element) => element.listId == list[index].id)
         .where((element) => element.finished == false)
         .length;
+  }
+
+  List<TaskList> filterTable(FixedListType type) {
+    switch (type) {
+      case FixedListType.HOJE:
+        {
+          return TaskListRepository.instance.table
+              .where((element) =>
+                  element.date == DateTime.now().toString().substring(0, 10))
+              .where((element) => element.finished == false)
+              .toList();
+        }
+      case FixedListType.AMANHA:
+        {
+          return TaskListRepository.instance.table
+              .where((element) =>
+                  element.date ==
+                  DateTime.now()
+                      .add(Duration(days: 1))
+                      .toString()
+                      .substring(0, 10))
+              .where((element) => element.finished == false)
+              .toList();
+        }
+      case FixedListType.EMBREVE:
+        {
+          return TaskListRepository.instance.table
+              .where((element) => element.date != '')
+              .where((element) => element.finished == false)
+              .toList();
+        }
+    }
+    return TaskListRepository.instance.table
+        .where((element) => element.date == '')
+        .where((element) => element.finished == false)
+        .toList();
   }
 }
