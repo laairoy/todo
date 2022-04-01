@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:todo/models/load_list_repository.dart';
+import 'package:todo/models/task_list.dart';
 import 'package:todo/pages/new_task.dart';
 import 'package:todo/repositories/task_list_repository.dart';
 
@@ -15,13 +16,19 @@ class Inbox extends StatefulWidget {
 }
 
 class _InboxState extends State<Inbox> {
+  late List<TaskList> table;
+
   @override
-  Widget build(BuildContext context) {
-    final table = TaskListRepository.instance.table
+  void initState() {
+    super.initState();
+    table = TaskListRepository.instance.table
         .where((element) => element.listId == widget.listItem.id)
         .where((element) => element.finished == false)
         .toList();
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
@@ -29,7 +36,8 @@ class _InboxState extends State<Inbox> {
             context,
             MaterialPageRoute(
               builder: (context) => NewTask(
-                listItem: widget.listItem.id,
+                listId: widget.listItem.id,
+                onSave: updateState,
               ),
             ),
           );
@@ -52,14 +60,22 @@ class _InboxState extends State<Inbox> {
             key: Key(table[task].name),
             value: table[task].finished,
             onChanged: (value) {
-              setState(() {
-                table[task].finished = value;
-                widget.onSave();
-              });
+              table[task].finished = value;
+              updateState();
             },
           );
         },
       ),
     );
+  }
+
+  void updateState() {
+    setState(() {
+      widget.onSave();
+      table = TaskListRepository.instance.table
+          .where((element) => element.listId == widget.listItem.id)
+          .where((element) => element.finished == false)
+          .toList();
+    });
   }
 }

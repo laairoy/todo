@@ -3,23 +3,20 @@ import 'package:todo/models/load_list_repository.dart';
 import 'package:todo/models/task_list.dart';
 import 'package:todo/repositories/task_list_repository.dart';
 
-class NewTask extends StatefulWidget {
-  //final void Function() onSave;
+class NewTask extends StatelessWidget {
+  NewTask({Key? key, required this.listId, required this.onSave })
+      : super(key: key);
 
-  NewTask({Key? key, required listItem}) : super(key: key);
-  //late Item listItem;
-  @override
-  State<NewTask> createState() => _NewTaskState();
-}
-
-class _NewTaskState extends State<NewTask> {
-  @override
+  int listId;
+  final void Function() onSave;
+  List<TaskList> table = TaskListRepository.instance.table;
   TextEditingController _nameController = TextEditingController();
   TextEditingController _dateController = TextEditingController();
   TextEditingController _noteController = TextEditingController();
+
+  @override
   Widget build(BuildContext context) {
     //   final table = TaskListRepository.instance.table;
-    final table = TaskListRepository.instance.table;
     return Scaffold(
         appBar: AppBar(
           title: Text('Criar nova tarefa'),
@@ -54,12 +51,14 @@ class _NewTaskState extends State<NewTask> {
                     //  print(table[2].name);
                     //   print(table[4].name);
                     //    print(table[9].name);
-                    table.add(TaskList(
+                    TaskListRepository.instance.table.add(TaskList(
                         name: _nameController.text,
                         note: _noteController.text,
                         date: _dateController.text,
-                        finished: 'false',
-                        listId: 1));
+                        finished: false,
+                        listId: listId));
+                    onSave();
+                    Navigator.pop(context);
                   },
                   child: Text('Salvar')),
             ],
