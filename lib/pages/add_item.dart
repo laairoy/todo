@@ -18,7 +18,11 @@ class AddItem extends StatelessWidget {
     this.id = id ?? -1;
     this.currFolderId = currFolderId ?? -1;
     folderId = this.currFolderId == -1 ? -1 : loadList[this.currFolderId].id;
-    currentColor = this.id == -1 ? Colors.amber : loadList[id!].color;
+    currentColor = this.id == -1
+        ? Colors.amber
+        : this.currFolderId == -1
+            ? loadList[id!].color
+            : (loadList[currFolderId!] as FolderItem).iList[id!].color;
   }
 
   List<Item> loadList = ListRepository.instance.loadList;

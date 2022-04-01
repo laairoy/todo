@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:todo/models/fixed_list_type.dart';
-import 'package:todo/models/item_list.dart';
 import 'package:todo/models/task_list.dart';
-import 'package:todo/pages/new_task.dart';
-import 'package:todo/repositories/task_list_repository.dart';
 
 class TimeTaskList extends StatefulWidget {
   final FixedListType type;
