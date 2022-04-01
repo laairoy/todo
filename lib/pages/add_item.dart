@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:todo/models/load_list_repository.dart';
+import 'package:todo/models/item_list.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:todo/repositories/list_repository.dart';
 
