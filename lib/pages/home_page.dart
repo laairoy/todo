@@ -8,6 +8,7 @@ import 'package:todo/repositories/list_repository.dart';
 import 'package:todo/models/login_data.dart';
 import 'package:todo/repositories/task_list_repository.dart';
 
+import '../login.dart';
 import 'add_item.dart';
 import '../models/load_list_repository.dart';
 
@@ -125,7 +126,7 @@ class _HomePageState extends State<HomePage> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => Cadastrar()))
+                                builder: (context) => Login()))
                       },
                   icon: const Icon(Icons.bookmark_add)),
               IconButton(

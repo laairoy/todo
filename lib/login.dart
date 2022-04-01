@@ -4,18 +4,18 @@ import 'package:flutter/material.dart';
 
 
 void main() {
-  runApp(   MyApp());
+  runApp(   Login());
 }
 
-class MyApp extends StatefulWidget {
+class Login extends StatefulWidget {
  
-     MyApp({Key? key}) : super(key: key);
+     Login({Key? key}) : super(key: key);
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  State<Login> createState() => _LoginState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _LoginState extends State<Login> {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
