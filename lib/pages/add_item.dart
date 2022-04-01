@@ -29,6 +29,7 @@ class AddItem extends StatelessWidget {
   var currFolderId;
   Color currentColor = Colors.amber;
   final _formKey = GlobalKey<FormState>();
+  final _dropKey = GlobalKey<FormFieldState>();
   String name = '';
   int folderId = -1;
 
@@ -70,32 +71,48 @@ class AddItem extends StatelessWidget {
                 },
               ),
               if (type == ItemType.LIST)
-                Padding(
-                  padding: const EdgeInsets.only(top: 20.0),
-                  child: DropdownButtonFormField(
-                    decoration: InputDecoration(
-                      label: Text('Pasta'),
+                Row(
+                  children: [
+                    Expanded(
+                      //padding: const EdgeInsets.only(top: 20.0),
+                      child: DropdownButtonFormField(
+                        key: _dropKey,
+                        decoration: InputDecoration(
+                          label: Text('Pasta'),
+                        ),
+                        items: loadList
+                            .where((element) => element.type == ItemType.FOLDER)
+                            .map((e) {
+                          return DropdownMenuItem(
+                            child: Row(children: [
+                              const Icon(Icons.folder),
+                              Padding(
+                                child: Text(e.name),
+                                padding: EdgeInsets.only(left: 10),
+                              )
+                            ]),
+                            value: (e.id),
+                          );
+                        }).toList(),
+                        value: currFolderId != -1
+                            ? loadList[currFolderId].id
+                            : null,
+                        onChanged: (value) {
+                          folderId = value != null? value as int : -1;
+                        },
+                      ),
                     ),
-                    items: loadList
-                        .where((element) => element.type == ItemType.FOLDER)
-                        .map((e) {
-                      return DropdownMenuItem(
-                        child: Row(children: [
-                          const Icon(Icons.folder),
-                          Padding(
-                            child: Text(e.name),
-                            padding: EdgeInsets.only(left: 10),
-                          )
-                        ]),
-                        value: (e.id),
-                      );
-                    }).toList(),
-                    value:
-                        currFolderId != -1 ? loadList[currFolderId].id : null,
-                    onChanged: (value) {
-                      folderId = value as int;
-                    },
-                  ),
+                    Padding(
+                      padding: EdgeInsets.only(top: 10),
+                      child: IconButton(
+                        onPressed: () {
+                          print('foi');
+                          _dropKey.currentState!.didChange(null);
+                        },
+                        icon: Icon(Icons.folder_off),
+                      ),
+                    ),
+                  ],
                 ),
               Expanded(
                 child: Padding(
@@ -121,10 +138,15 @@ class AddItem extends StatelessWidget {
                               color: currentColor,
                               iList: [])
                           : ListItem(
-                              id: newId,
-                              name: name,
-                              color: currentColor);
+                              id: newId, name: name, color: currentColor);
                       if (folderId == -1) {
+                        if(id != -1 && currFolderId != -1){
+                          ListItem listItem =
+                          (loadList[currFolderId] as FolderItem)
+                              .iList
+                              .removeAt(id);
+                              loadList.add(listItem);
+                        }
                         if (id != -1) {
                           loadList[id].name = name;
                           loadList[id].color = currentColor;
@@ -132,18 +154,14 @@ class AddItem extends StatelessWidget {
                           loadList.add(item);
                         }
                       } else {
-                        if(id != -1 && currFolderId == -1){
-                          ListItem listItem =
-                          loadList.removeAt(id) as ListItem;
+                        if (id != -1 && currFolderId == -1) {
+                          ListItem listItem = loadList.removeAt(id) as ListItem;
                           (loadList.firstWhere(
-                                  (element) => element.id == folderId)
-                          as FolderItem)
+                                      (element) => element.id == folderId)
+                                  as FolderItem)
                               .iList
                               .add(listItem);
-                        }
-                        else if (id != -1) {
-                          print(folderId);
-                          print(loadList[currFolderId].id);
+                        } else if (id != -1) {
                           if (loadList[currFolderId].id == folderId) {
                             var iList =
                                 (loadList[currFolderId] as FolderItem).iList;
@@ -151,7 +169,9 @@ class AddItem extends StatelessWidget {
                             iList[id].color = currentColor;
                           } else {
                             ListItem listItem =
-                                (loadList[currFolderId] as FolderItem).iList.removeAt(id);
+                                (loadList[currFolderId] as FolderItem)
+                                    .iList
+                                    .removeAt(id);
                             (loadList.firstWhere(
                                         (element) => element.id == folderId)
                                     as FolderItem)

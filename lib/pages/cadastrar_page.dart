@@ -21,18 +21,32 @@ class CadastrarPage extends StatelessWidget {
           child: Column(
             children: [
               TextFormField(
-                controller: _emailController,
                 decoration: InputDecoration(
-                  hintText: 'digite seu email!',
-                  label: Text('Email'),
+                  hintText: 'digit seu nome',
+                  label: Text('Nome'),
                 ),
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Digite o email!';
-                  } else if (EmailValidator.validate(value) == false) {
-                    return 'Email inválido!';
+                validator: (value){
+                  if(value!.isEmpty){
+                    return 'Digite seu nome!';
                   }
                 },
+              ),
+              Padding(
+                padding: EdgeInsets.only(top: 10),
+                child: TextFormField(
+                  controller: _emailController,
+                  decoration: InputDecoration(
+                    hintText: 'digite seu email!',
+                    label: Text('Email'),
+                  ),
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Digite o email!';
+                    } else if (EmailValidator.validate(value) == false) {
+                      return 'Email inválido!';
+                    }
+                  },
+                ),
               ),
               Padding(
                 padding: EdgeInsets.only(top: 20),
@@ -59,8 +73,8 @@ class CadastrarPage extends StatelessWidget {
                     label: Text('Senha'),
                   ),
                   obscureText: true,
-                  validator: (value){
-                    if(value!.isEmpty){
+                  validator: (value) {
+                    if (value!.isEmpty) {
                       return 'Digite uma senha';
                     }
                   },
@@ -70,7 +84,7 @@ class CadastrarPage extends StatelessWidget {
                 padding: EdgeInsets.only(top: 20),
                 child: TextFormField(
                   validator: (value) {
-                    if(value!.isEmpty){
+                    if (value!.isEmpty) {
                       return 'Digite uma senha!';
                     }
                     if (value != _passController.text) {
