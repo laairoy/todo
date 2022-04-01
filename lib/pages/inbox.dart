@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:todo/models/load_list_repository.dart';
+import 'package:todo/pages/new_task.dart';
 import 'package:todo/repositories/task_list_repository.dart';
 
 class Inbox extends StatefulWidget {
   late Item listItem;
   final void Function() onSave;
 
-  Inbox({Key? key, required this.listItem, required this.onSave}) : super(key: key);
+  Inbox({Key? key, required this.listItem, required this.onSave})
+      : super(key: key);
 
   @override
   State<Inbox> createState() => _InboxState();
@@ -21,6 +23,20 @@ class _InboxState extends State<Inbox> {
         .toList();
 
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => NewTask(
+                listItem: widget.listItem.id,
+              ),
+            ),
+          );
+        },
+        backgroundColor: Color.fromARGB(255, 83, 83, 83),
+        child: const Icon(Icons.navigation),
+      ),
       appBar: AppBar(
         title: Text(widget.listItem.name),
       ),
@@ -39,8 +55,7 @@ class _InboxState extends State<Inbox> {
               setState(() {
                 table[task].finished = value;
                 widget.onSave();
-              }
-              );
+              });
             },
           );
         },
