@@ -85,7 +85,10 @@ class AddItem extends StatelessWidget {
                             .map((e) {
                           return DropdownMenuItem(
                             child: Row(children: [
-                              const Icon(Icons.folder),
+                              Icon(
+                                Icons.folder,
+                                color: e.color,
+                              ),
                               Padding(
                                 child: Text(e.name),
                                 padding: EdgeInsets.only(left: 10),
@@ -98,7 +101,7 @@ class AddItem extends StatelessWidget {
                             ? loadList[currFolderId].id
                             : null,
                         onChanged: (value) {
-                          folderId = value != null? value as int : -1;
+                          folderId = value != null ? value as int : -1;
                         },
                       ),
                     ),
@@ -106,7 +109,6 @@ class AddItem extends StatelessWidget {
                       padding: EdgeInsets.only(top: 10),
                       child: IconButton(
                         onPressed: () {
-                          print('foi');
                           _dropKey.currentState!.didChange(null);
                         },
                         icon: Icon(Icons.folder_off),
@@ -140,12 +142,12 @@ class AddItem extends StatelessWidget {
                           : ListItem(
                               id: newId, name: name, color: currentColor);
                       if (folderId == -1) {
-                        if(id != -1 && currFolderId != -1){
+                        if (id != -1 && currFolderId != -1) {
                           ListItem listItem =
-                          (loadList[currFolderId] as FolderItem)
-                              .iList
-                              .removeAt(id);
-                              loadList.add(listItem);
+                              (loadList[currFolderId] as FolderItem)
+                                  .iList
+                                  .removeAt(id);
+                          loadList.add(listItem);
                         }
                         if (id != -1) {
                           loadList[id].name = name;
