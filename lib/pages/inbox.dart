@@ -1,110 +1,110 @@
 import 'package:flutter/material.dart';
 import 'package:todo/models/item_list.dart';
 import 'package:todo/models/task_list.dart';
+import 'package:todo/pages/new_task.dart';
 import 'package:todo/repositories/task_list_repository.dart';
-import 'package:intl/intl.dart';
-import 'package:date_format/date_format.dart';
 
-class NewTask extends StatelessWidget {
-  NewTask({Key? key, required this.task, required this.onSave, required this.listId})
-      : super(key: key);
 
-  int listId;
-   int task;
+class Inbox extends StatefulWidget {
+  late Item listItem;
+  
   final void Function() onSave;
-  List<TaskList> table = TaskListRepository.instance.table;
-  final _formKey = GlobalKey<FormState>();
-  TextEditingController _nameController = TextEditingController();
-  TextEditingController _dateController = TextEditingController();
-  TextEditingController _noteController = TextEditingController();
- 
+  Inbox({Key? key, required this.listItem, required this.onSave})
+      : super(key: key);
+      
+
+  @override
+  State<Inbox> createState() => _InboxState();
+}
+
+class _InboxState extends State<Inbox> {
+  late List<TaskList> table;
+  List<TaskList> selecio = [];
+
+  @override
+  void initState() {
+    int ccc;
+    super.initState();
+    table = TaskListRepository.instance.table
+        .where((element) => element.listId == widget.listItem.id)
+        .where((element) => element.finished == false)
+        .toList();
+  }
+
   @override
   Widget build(BuildContext context) {
-    canUpdate(_)=> {  print(task)};
-    //   final table = TaskListRepository.instance.table;
     return Scaffold(
-        appBar: AppBar(
-        
-           title: Row(
-            children: [
-             
-              Text( 'Criar nova tarefa                                                                                                                                   '),
-              Text(_noteController.text = table[task].note.toString()),
-              Text(_nameController.text = table[task].name.toString()),
-              Text(_dateController.text= table[task].date.toString()),
-            ],
-          ),
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(10),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                TextFormField(
-                  controller: _nameController,
-                  decoration: InputDecoration(labelText: 'Nome da tarefa'),
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Digite um nome válido';
-                    }
-                  },
-                ),
-//            Text('Data'),
-                Padding(
-                  padding: EdgeInsets.only(top: 10),
-                  child: TextFormField(
-                    controller: _dateController,
-                    decoration: InputDecoration(labelText: 'Data'),
-                    readOnly: true,
-                    onTap: () async {
-                      var date = await showDatePicker(
-                          context: context,
-                          initialDate: DateTime.now(),
-                          firstDate: DateTime(1900),
-                          lastDate: DateTime(2100));
-                      _dateController.text = formatDate(
-                          DateTime.parse(date.toString()),
-                          [dd, '/', mm, '/', yyyy]);
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(top: 10),
-                  child: Expanded(
-                    child: TextFormField(
-                      controller: _noteController,
-                      maxLines: 4,
-                      decoration: InputDecoration(
-                          labelText: 'Adicionar Nota',
-                          border: OutlineInputBorder()),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(top: 10),
-                  child: SizedBox(
-                    height: 50,
-                    width: double.infinity,
-                    child: ElevatedButton(
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {
-                            _formKey.currentState!.save();
-                            TaskListRepository.instance.table[task].listId=listId;
-                            TaskListRepository.instance.table[task].note=_noteController.text;
-                            TaskListRepository.instance.table[task].name=_nameController.text;
-                            TaskListRepository.instance.table[task].date=_dateController.text;
-                            TaskListRepository.instance.table[task].finished= false;
-                            onSave();
-                            Navigator.pop(context);
-                          }
-                        },
-                        child: Text('Salvar')),
-                  ),
-                ),
-              ],
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.add),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => NewTask(
+                task: 0,
+                listId: widget.listItem.id,
+                onSave: updateState,
+                
+
+              ),
             ),
-          ),
-        ));
+          );
+        },
+        backgroundColor: Color.fromARGB(255, 83, 83, 83),
+      ),
+      appBar: AppBar(
+        title: Text(widget.listItem.name),
+      ),
+      body: Padding(
+        padding: EdgeInsets.only(top: 10),
+        child: ListView.builder(
+          itemCount: table.length,
+          itemBuilder: (BuildContext context, int task) {
+            return CheckboxListTile(
+              //   leading: table[task].icon,
+              title: Text(table[task].name),
+              subtitle: Text(table[task].date),
+              controlAffinity: ListTileControlAffinity.leading,
+              //   trailing: Text(table[task].date),
+              key: Key(table[task].name),
+              value: table[task].finished,  
+              
+              onChanged: (value) {
+                
+                //print(table.map(1));
+                tesc (task);
+                //table[task].finished = value;
+                //updateState();
+                
+                //(selecio.contains(table[table])? selecio.remove(table[task]):
+                //selecio.add(table[task]);
+                print(task);
+                  
+                //
+                //updateState();
+              },
+            );
+            
+          },
+          
+        ),
+      ),
+    );
+  }
+
+tesc (int ccc){
+  Navigator.push(context, MaterialPageRoute(builder:
+  
+  (_) => NewTask(task: ccc, onSave: updateState ,  listId: table[ccc].listId),
+  ));
+}
+  void updateState() {
+    setState(() {
+      widget.onSave();
+      table = TaskListRepository.instance.table
+          .where((element) => element.listId == widget.listItem.id)
+          .where((element) => element.finished == false)
+          .toList();
+    });
   }
 }
