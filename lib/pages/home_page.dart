@@ -85,8 +85,17 @@ class _HomePageState extends State<HomePage> {
                   onTap: () =>
                       openDateFilter(FixedListType.ALGUMDIA, 'Algum Dia'),
                 ),
+                ListTile(
+                  title: Text('Concluídos'),
+                  leading:
+                      Icon(Icons.check_circle, color: Colors.white60),
+                  trailing:
+                      Text(filterTable(FixedListType.DONE).length.toString()),
+                  onTap: () => openDateFilter(FixedListType.DONE, 'Algum Dia'),
+                ),
               ],
             ),
+            Divider(),
             ListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
@@ -242,7 +251,8 @@ class _HomePageState extends State<HomePage> {
           return TaskListRepository.instance.table
               .where((element) =>
                   element.date ==
-                      formatDate(DateTime.now().add(Duration(days: 1)), [dd, '/', mm, '/', yyyy]))
+                  formatDate(DateTime.now().add(Duration(days: 1)),
+                      [dd, '/', mm, '/', yyyy]))
               .where((element) => element.finished == false)
               .toList();
         }
@@ -253,10 +263,14 @@ class _HomePageState extends State<HomePage> {
               .where((element) => element.finished == false)
               .toList();
         }
+      case FixedListType.ALGUMDIA:
+        return TaskListRepository.instance.table
+            .where((element) => element.date == '')
+            .where((element) => element.finished == false)
+            .toList();
     }
     return TaskListRepository.instance.table
-        .where((element) => element.date == '')
-        .where((element) => element.finished == false)
+        .where((element) => element.finished == true)
         .toList();
   }
 }

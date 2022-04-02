@@ -3,4 +3,5 @@ enum FixedListType {
   AMANHA,
   EMBREVE,
   ALGUMDIA,
+  DONE,
 }

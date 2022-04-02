@@ -25,7 +25,7 @@ class TaskListRepository {
         listId: 1,
       ),
       TaskList(
-        name: 'varrer a casa',
+        name: 'Ler Harry',
         date: '12/06/2023',
         note: 'parapapapapara',
         finished: true,
