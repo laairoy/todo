@@ -6,23 +6,34 @@ import 'package:intl/intl.dart';
 import 'package:date_format/date_format.dart';
 
 class NewTask extends StatelessWidget {
-  NewTask({Key? key, required this.listId, required this.onSave})
+  NewTask({Key? key, required this.task, required this.onSave, required this.listId})
       : super(key: key);
 
   int listId;
+   int task;
   final void Function() onSave;
   List<TaskList> table = TaskListRepository.instance.table;
   final _formKey = GlobalKey<FormState>();
   TextEditingController _nameController = TextEditingController();
   TextEditingController _dateController = TextEditingController();
   TextEditingController _noteController = TextEditingController();
-
+ 
   @override
   Widget build(BuildContext context) {
+    canUpdate(_)=> {  print(task)};
     //   final table = TaskListRepository.instance.table;
     return Scaffold(
         appBar: AppBar(
-          title: Text('Criar nova tarefa'),
+        
+           title: Row(
+            children: [
+             
+              Text( 'Criar nova tarefa                                                                                                                                   '),
+              Text(_noteController.text = table[task].note.toString()),
+              Text(_nameController.text = table[task].name.toString()),
+              Text(_dateController.text= table[task].date.toString()),
+            ],
+          ),
         ),
         body: Padding(
           padding: const EdgeInsets.all(10),
@@ -79,12 +90,11 @@ class NewTask extends StatelessWidget {
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
                             _formKey.currentState!.save();
-                            TaskListRepository.instance.table.add(TaskList(
-                                name: _nameController.text,
-                                note: _noteController.text,
-                                date: _dateController.text,
-                                finished: false,
-                                listId: listId));
+                            TaskListRepository.instance.table[task].listId=listId;
+                            TaskListRepository.instance.table[task].note=_noteController.text;
+                            TaskListRepository.instance.table[task].name=_nameController.text;
+                            TaskListRepository.instance.table[task].date=_dateController.text;
+                            TaskListRepository.instance.table[task].finished= false;
                             onSave();
                             Navigator.pop(context);
                           }
