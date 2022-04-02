@@ -69,18 +69,27 @@ class _InboxState extends State<Inbox> {
                   ),
                 );
               },
-
-              title: Text(table[task].name),
+              title: Text(
+                table[task].name,
+                style: table[task].finished
+                    ? TextStyle(decoration: TextDecoration.lineThrough)
+                    : TextStyle(),
+              ),
               subtitle: table[task].date == '' ? null : Text(table[task].date),
               leading: Checkbox(
                 value: table[task].finished,
                 onChanged: (bool? value) {
-                  table[task].finished = value!;
-                  updateState();
+                  setState(() {
+                    table[task].finished = value!;
+                  });
+                  Future.delayed(Duration(milliseconds: 500), updateState);
                 },
               ),
             );
-          }, separatorBuilder: (BuildContext context, int index) { return Divider(); },
+          },
+          separatorBuilder: (BuildContext context, int index) {
+            return Divider();
+          },
         ),
       ),
     );
