@@ -1,16 +1,43 @@
-# todo
+# TODO APP
+---
+Aplicativo de gerenciamento de tarefas desenvolvido em flutter.
 
-A new Flutter project.
+## Integrantes
+- Emanuel Guerke
+    - Desenvolvimento das telas que visualizam  e editam as tarefas.
+- Marden Laairoy
+  - Desenvolvimento das telas que visualizam e editam as pastas e listas de tarefas.
+- Rodrigo Dias
+    - Desenvolvimento das telas de login, cadastro e na edição de tarefas.
+    
+## To-Do
+- Lista para visualizar tarefas concluídas e desmarcá-las.
+- Possibilidade de reorganizar as listas e tarefas na tela.
+- Possibilidade de deletar listas, pastas e tarefas.
 
-## Getting Started
+## Como instalar
+### Requisitos
+- flutter: 2.10.4
+- dart: 2.16.2
 
-This project is a starting point for a Flutter application.
+### Usando linha de comando
+1. Clonar o repositório:
+- `git clone https://github.com/laairoy/todo.git`
+2. Entrar na pasta:
+- `cd todo`
+3. Gerar um arquivo APK, para rodar em um dispositivo android:
+- `flutter build apk`
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### Usando VS Code
+1. Abra uma nova janela do VS Code
+2. Selecione no menu lateral esquerdo a opção: 
+  - `controle de código fonte`
+3. Clicar em 
+  - `Clone Repository`
+4. Adicionar o endereço do projeto:
+  - `git clone https://github.com/laairoy/todo.git`
+5. Selecione o diretório onde o projeto deve ser salvo.
+6. Ao fim do download selecione abrir repositório
+7. Abrir o arquivo:
+  - `lib/main.dart`
+8. Execute o projeto.
