@@ -41,3 +41,6 @@ Aplicativo de gerenciamento de tarefas desenvolvido em flutter.
 7. Abrir o arquivo:
   - `lib/main.dart`
 8. Execute o projeto.
+
+### Configuração básica do aplicativo
+- Para "logar" é necessário colocar um e-mail válido, `ex: a@a.a`, e uma senha: ´ex: a´
