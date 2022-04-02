@@ -2,7 +2,7 @@ class TaskList {
   String date;
   String name;
   String note;
-  var finished;
+  bool finished;
   int listId;
 
   TaskList({

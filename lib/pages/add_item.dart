@@ -83,12 +83,19 @@ class AddItem extends StatelessWidget {
                         key: _dropKey,
                         decoration: InputDecoration(
                           label: Text('Pasta'),
+                          suffixIcon: IconButton(
+                            onPressed: () {
+                              _dropKey.currentState!.didChange(null);
+                            },
+                            icon: Icon(Icons.highlight_remove),
+                          ),
                         ),
                         items: loadList
                             .where((element) => element.type == ItemType.FOLDER)
                             .map((e) {
                           return DropdownMenuItem(
-                            child: Row(children: [
+                            child: Row(
+                                children: [
                               Icon(
                                 Icons.folder,
                                 color: e.color,
@@ -107,15 +114,6 @@ class AddItem extends StatelessWidget {
                         onChanged: (value) {
                           folderId = value != null ? value as int : -1;
                         },
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(top: 10),
-                      child: IconButton(
-                        onPressed: () {
-                          _dropKey.currentState!.didChange(null);
-                        },
-                        icon: Icon(Icons.folder_off),
                       ),
                     ),
                   ],

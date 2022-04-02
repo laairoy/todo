@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:todo/models/fixed_list_type.dart';
 import 'package:todo/models/task_list.dart';
+import 'package:todo/pages/new_task.dart';
+import 'package:todo/repositories/task_list_repository.dart';
 
 class TimeTaskList extends StatefulWidget {
   final FixedListType type;
@@ -31,25 +33,37 @@ class _TimeTaskListState extends State<TimeTaskList> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Padding(
+      body:Padding(
         padding: EdgeInsets.only(top: 10),
-        child: ListView.builder(
+        child: ListView.separated(
           itemCount: table.length,
           itemBuilder: (BuildContext context, int task) {
-            return CheckboxListTile(
-              //   leading: table[task].icon,
-              title: Text(table[task].name),
-              subtitle: Text(table[task].date),
-              controlAffinity: ListTileControlAffinity.leading,
-              //   trailing: Text(table[task].date),
-              key: Key(table[task].name),
-              value: table[task].finished,
-              onChanged: (value) {
-                table[task].finished = value;
-                updateState();
+            return ListTile(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => NewTask(
+                      onSave: updateState,
+                      task: TaskListRepository.instance.table
+                          .indexOf(table[task]),
+                      listId: table[task].listId,
+                    ),
+                  ),
+                );
               },
+
+              title: Text(table[task].name),
+              subtitle: table[task].date == '' ? null : Text(table[task].date),
+              leading: Checkbox(
+                value: table[task].finished,
+                onChanged: (bool? value) {
+                  table[task].finished = value!;
+                  updateState();
+                },
+              ),
             );
-          },
+          }, separatorBuilder: (BuildContext context, int index) { return Divider(); },
         ),
       ),
     );

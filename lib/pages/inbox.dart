@@ -4,14 +4,13 @@ import 'package:todo/models/task_list.dart';
 import 'package:todo/pages/new_task.dart';
 import 'package:todo/repositories/task_list_repository.dart';
 
-
 class Inbox extends StatefulWidget {
   late Item listItem;
-  
+
   final void Function() onSave;
+
   Inbox({Key? key, required this.listItem, required this.onSave})
       : super(key: key);
-      
 
   @override
   State<Inbox> createState() => _InboxState();
@@ -23,7 +22,6 @@ class _InboxState extends State<Inbox> {
 
   @override
   void initState() {
-    int ccc;
     super.initState();
     table = TaskListRepository.instance.table
         .where((element) => element.listId == widget.listItem.id)
@@ -41,11 +39,8 @@ class _InboxState extends State<Inbox> {
             context,
             MaterialPageRoute(
               builder: (context) => NewTask(
-                task: 0,
                 listId: widget.listItem.id,
                 onSave: updateState,
-                
-
               ),
             ),
           );
@@ -57,47 +52,40 @@ class _InboxState extends State<Inbox> {
       ),
       body: Padding(
         padding: EdgeInsets.only(top: 10),
-        child: ListView.builder(
+        child: ListView.separated(
           itemCount: table.length,
           itemBuilder: (BuildContext context, int task) {
-            return CheckboxListTile(
-              //   leading: table[task].icon,
-              title: Text(table[task].name),
-              subtitle: Text(table[task].date),
-              controlAffinity: ListTileControlAffinity.leading,
-              //   trailing: Text(table[task].date),
-              key: Key(table[task].name),
-              value: table[task].finished,  
-              
-              onChanged: (value) {
-                
-                //print(table.map(1));
-                tesc (task);
-                //table[task].finished = value;
-                //updateState();
-                
-                //(selecio.contains(table[table])? selecio.remove(table[task]):
-                //selecio.add(table[task]);
-                print(task);
-                  
-                //
-                //updateState();
+            return ListTile(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => NewTask(
+                      onSave: updateState,
+                      task: TaskListRepository.instance.table
+                          .indexOf(table[task]),
+                      listId: table[task].listId,
+                    ),
+                  ),
+                );
               },
+
+              title: Text(table[task].name),
+              subtitle: table[task].date == '' ? null : Text(table[task].date),
+              leading: Checkbox(
+                value: table[task].finished,
+                onChanged: (bool? value) {
+                  table[task].finished = value!;
+                  updateState();
+                },
+              ),
             );
-            
-          },
-          
+          }, separatorBuilder: (BuildContext context, int index) { return Divider(); },
         ),
       ),
     );
   }
 
-tesc (int ccc){
-  Navigator.push(context, MaterialPageRoute(builder:
-  
-  (_) => NewTask(task: ccc, onSave: updateState ,  listId: table[ccc].listId),
-  ));
-}
   void updateState() {
     setState(() {
       widget.onSave();
