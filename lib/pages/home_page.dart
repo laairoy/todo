@@ -22,19 +22,17 @@ class _HomePageState extends State<HomePage> {
   LoginData loginData = LoginData();
 
   List<TaskList> taskList = TaskListRepository.instance.table;
-  late ListRepository listRepository;
-  List<Item> loadList = [];
+  List<Item> loadList = ListRepository.instance.loadList;
 
   @override
   void initState() {
     super.initState();
-    listRepository = ListRepository.instance;
-    loadList = listRepository.loadList;
+    loadList.sort((a, b) => a.orderId.compareTo(b.orderId));
   }
 
   @override
   Widget build(BuildContext context) {
-    List<Item> localList = ListRepository.instance.loadList
+    List<Item> localList = loadList
         .where((element) => (element.type == ItemType.FOLDER ||
             (element.type == ItemType.LIST &&
                 (element as ListItem).folderId == -1)))
@@ -69,14 +67,16 @@ class _HomePageState extends State<HomePage> {
                 ),
                 ListTile(
                   title: const Text('Amanhã'),
-                  leading: const Icon(Icons.wb_twilight, color: Colors.redAccent),
+                  leading:
+                      const Icon(Icons.wb_twilight, color: Colors.redAccent),
                   trailing:
                       Text(filterTable(FixedListType.AMANHA).length.toString()),
                   onTap: () => openDateFilter(FixedListType.AMANHA, 'Amanha'),
                 ),
                 ListTile(
                   title: const Text('Em Breve'),
-                  leading: const Icon(Icons.calendar_month, color: Colors.blueAccent),
+                  leading: const Icon(Icons.calendar_month,
+                      color: Colors.blueAccent),
                   trailing: Text(
                       filterTable(FixedListType.EMBREVE).length.toString()),
                   onTap: () =>
@@ -93,7 +93,8 @@ class _HomePageState extends State<HomePage> {
                 ),
                 ListTile(
                   title: const Text('Concluídos'),
-                  leading: const Icon(Icons.check_circle, color: Colors.white60),
+                  leading:
+                      const Icon(Icons.check_circle, color: Colors.white60),
                   trailing:
                       Text(filterTable(FixedListType.DONE).length.toString()),
                   onTap: () => openDateFilter(FixedListType.DONE, 'Algum Dia'),
@@ -101,40 +102,54 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
             const Divider(),
-            ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: localList.length,
-              itemBuilder: (context, int index) {
-                return localList[index].type == ItemType.FOLDER
-                    ? GestureDetector(
-                        onLongPress: () => openAddItem(context, ItemType.FOLDER,
-                            id: loadList.indexOf(localList[index])),
-                        child: ExpansionTile(
-                          title: Text(localList[index].name),
-                          leading:
-                              Icon(Icons.folder, color: localList[index].color),
-                          childrenPadding: const EdgeInsets.only(left: 10),
-                          children: [
-                            ListView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount:
-                                  filterFolderList(localList[index].id).length,
-                              itemBuilder: (BuildContext context, int i) {
-                                List<Item> subList =
-                                    filterFolderList(localList[index].id);
-                                return buildListTile(subList, i, context,
-                                    folderId:
-                                        loadList.indexOf(localList[index]));
-                              },
+            ReorderableListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: localList.length,
+                itemBuilder: (context, int index) {
+                  return Container(
+                    key: Key('${localList[index].orderId}'),
+                    child: localList[index].type == ItemType.FOLDER
+                        ? GestureDetector(
+                            onDoubleTap: () => openAddItem(
+                                context, ItemType.FOLDER,
+                                id: loadList.indexOf(localList[index])),
+                            child: ExpansionTile(
+                              title: Text(localList[index].name),
+                              leading: Icon(Icons.folder,
+                                  color: localList[index].color),
+                              childrenPadding: const EdgeInsets.only(left: 10),
+                              children: [
+                                ReorderableListView.builder(
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemCount:
+                                      filterFolderList(localList[index].id)
+                                          .length,
+                                  itemBuilder: (BuildContext context, int i) {
+                                    List<Item> subList =
+                                        filterFolderList(localList[index].id);
+                                    return Container(
+                                    key: Key('${subList[i].orderId}'),
+                                      child: buildListTile(subList, i, context,
+                                          folderId:
+                                              loadList.indexOf(localList[index])),
+                                    );
+                                  },
+                                  onReorder: (int oldIndex, int newIndex) {
+                                    reoderList(oldIndex, newIndex,
+                                        filterFolderList(localList[index].id));
+                                  },
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                      )
-                    : buildListTile(localList, index, context);
-              },
-            ),
+                          )
+                        : buildListTile(localList, index, context),
+                  );
+                },
+                onReorder: (int oldIndex, int newIndex) {
+                  reoderList(oldIndex, newIndex, localList);
+                }),
           ],
         ),
       ),
@@ -177,27 +192,28 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  ListTile buildListTile(var list, int i, BuildContext context,
-      {int? folderId}) {
-    return ListTile(
-      title: Text(list[i].name),
-      leading: Icon(Icons.list, color: list[i].color),
-      trailing: Text(taskCountFilter(list, i).toString()),
-      onLongPress: () {
+  Widget buildListTile(var list, int i, BuildContext context, {int? folderId}) {
+    return GestureDetector(
+      onDoubleTap: () {
         openAddItem(context, ItemType.LIST,
             id: loadList.indexOf(list[i]), folderId: folderId);
       },
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => Inbox(
-              listItem: list[i],
-              onSave: updateList,
+      child: ListTile(
+        title: Text(list[i].name),
+        leading: Icon(Icons.list, color: list[i].color),
+        trailing: Text(taskCountFilter(list, i).toString()),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Inbox(
+                listItem: list[i],
+                onSave: updateList,
+              ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 
@@ -229,8 +245,9 @@ class _HomePageState extends State<HomePage> {
 
   void updateList() {
     setState(() {
-      loadList = listRepository.loadList;
+      loadList = ListRepository.instance.loadList;
       taskList = TaskListRepository.instance.table;
+      loadList.sort((a, b) => a.orderId.compareTo(b.orderId));
     });
   }
 
@@ -285,5 +302,27 @@ class _HomePageState extends State<HomePage> {
     return TaskListRepository.instance.table
         .where((element) => element.finished == true)
         .toList();
+  }
+
+  void reoderList(int oldIndex, int newIndex, var list) {
+    setState(() {
+      if (oldIndex < newIndex) {
+        newIndex -= 1;
+      }
+      //print('old: $oldIndex, new: $newIndex');
+      int newOrderId = list[newIndex].orderId;
+      if (newIndex > oldIndex) {
+        for (int i = newIndex; i > oldIndex; i--) {
+          list[i].orderId--;
+        }
+      } else {
+        for (int i = newIndex; i < oldIndex; i++) {
+          list[i].orderId++;
+        }
+      }
+      list[oldIndex].orderId = newOrderId;
+
+      updateList();
+    });
   }
 }

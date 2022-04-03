@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 abstract class Item {
   int id;
+  late int orderId;
   String name;
   Color color;
   ItemType type;
@@ -11,7 +12,9 @@ abstract class Item {
     required this.name,
     required this.color,
     required this.type,
-  });
+  }){
+    orderId = id;
+  }
 }
 
 class FolderItem extends Item {
