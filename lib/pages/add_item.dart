@@ -1,7 +1,4 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:todo/models/item_list.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:todo/repositories/list_repository.dart';
@@ -18,19 +15,15 @@ class AddItem extends StatelessWidget {
     this.id = id ?? -1;
     this.currFolderId = currFolderId ?? -1;
     folderId = this.currFolderId == -1 ? -1 : loadList[this.currFolderId].id;
-    currentColor = this.id == -1
-        ? Colors.amber
-        : this.currFolderId == -1
-            ? loadList[id!].color
-            : (loadList[currFolderId!] as FolderItem).iList[id!].color;
+    currentColor = this.id == -1 ? Colors.amber : loadList[id!].color;
   }
 
   List<Item> loadList = ListRepository.instance.loadList;
   int newId = ListRepository.instance.count;
   final ItemType type;
   late String nameType;
-  var id;
-  var currFolderId;
+  late var id;
+  late var currFolderId;
   Color currentColor = Colors.amber;
   final _formKey = GlobalKey<FormState>();
   final _dropKey = GlobalKey<FormFieldState>();
@@ -51,18 +44,14 @@ class AddItem extends StatelessWidget {
         title: Text('Adicionar $nameType'),
       ),
       body: Padding(
-        padding: EdgeInsets.all(10),
+        padding: const EdgeInsets.all(10),
         child: Form(
           key: _formKey,
           child: Column(
             children: [
               TextFormField(
-                initialValue: id != -1
-                    ? (currFolderId != -1
-                        ? (loadList[currFolderId] as FolderItem).iList[id].name
-                        : loadList[id].name)
-                    : '',
-                decoration: InputDecoration(
+                initialValue: id != -1 ? loadList[id].name : '',
+                decoration: const InputDecoration(
                   label: Text('Nome'),
                 ),
                 onSaved: (value) {
@@ -82,27 +71,26 @@ class AddItem extends StatelessWidget {
                       child: DropdownButtonFormField(
                         key: _dropKey,
                         decoration: InputDecoration(
-                          label: Text('Pasta'),
+                          label: const Text('Pasta'),
                           suffixIcon: IconButton(
                             onPressed: () {
                               _dropKey.currentState!.didChange(null);
                             },
-                            icon: Icon(Icons.highlight_remove),
+                            icon: const Icon(Icons.highlight_remove),
                           ),
                         ),
                         items: loadList
                             .where((element) => element.type == ItemType.FOLDER)
                             .map((e) {
                           return DropdownMenuItem(
-                            child: Row(
-                                children: [
+                            child: Row(children: [
                               Icon(
                                 Icons.folder,
                                 color: e.color,
                               ),
                               Padding(
                                 child: Text(e.name),
-                                padding: EdgeInsets.only(left: 10),
+                                padding: const EdgeInsets.only(left: 10),
                               )
                             ]),
                             value: (e.id),
@@ -120,7 +108,7 @@ class AddItem extends StatelessWidget {
                 ),
               Expanded(
                 child: Padding(
-                  padding: EdgeInsets.only(top: 20),
+                  padding: const EdgeInsets.only(top: 20),
                   child: HueRingPicker(
                     colorPickerHeight: 200,
                     pickerColor: currentColor,
@@ -140,57 +128,21 @@ class AddItem extends StatelessWidget {
                               id: newId,
                               name: name,
                               color: currentColor,
-                              iList: [])
+                            )
                           : ListItem(
-                              id: newId, name: name, color: currentColor);
-                      if (folderId == -1) {
-                        if (id != -1 && currFolderId != -1) {
-                          ListItem listItem =
-                              (loadList[currFolderId] as FolderItem)
-                                  .iList
-                                  .removeAt(id);
-                          loadList.add(listItem);
-                        }
-                        if (id != -1) {
-                          loadList[id].name = name;
-                          loadList[id].color = currentColor;
-                        } else {
-                          loadList.add(item);
-                        }
+                              id: newId,
+                              name: name,
+                              color: currentColor,
+                              folderId: folderId);
+                      if (id == -1) {
+                        loadList.add(item);
                       } else {
-                        if (id != -1 && currFolderId == -1) {
-                          ListItem listItem = loadList.removeAt(id) as ListItem;
-                          (loadList.firstWhere(
-                                      (element) => element.id == folderId)
-                                  as FolderItem)
-                              .iList
-                              .add(listItem);
-                        } else if (id != -1) {
-                          if (loadList[currFolderId].id == folderId) {
-                            var iList =
-                                (loadList[currFolderId] as FolderItem).iList;
-                            iList[id].name = name;
-                            iList[id].color = currentColor;
-                          } else {
-                            ListItem listItem =
-                                (loadList[currFolderId] as FolderItem)
-                                    .iList
-                                    .removeAt(id);
-                            (loadList.firstWhere(
-                                        (element) => element.id == folderId)
-                                    as FolderItem)
-                                .iList
-                                .add(listItem);
-                          }
-                        } else {
-                          (loadList.firstWhere(
-                                      (element) => element.id == folderId)
-                                  as FolderItem)
-                              .iList
-                              .add(item as ListItem);
+                        loadList[id].name = name;
+                        loadList[id].color = currentColor;
+                        if (type == ItemType.LIST) {
+                          (loadList[id] as ListItem).folderId = folderId;
                         }
                       }
-
                       onSave();
                       Navigator.pop(context);
                     }

@@ -12,7 +12,7 @@ import 'add_item.dart';
 import '../models/item_list.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({Key? key}) : super(key: key);
+  const HomePage({Key? key}) : super(key: key);
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -34,6 +34,12 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    List<Item> localList = ListRepository.instance.loadList
+        .where((element) => (element.type == ItemType.FOLDER ||
+            (element.type == ItemType.LIST &&
+                (element as ListItem).folderId == -1)))
+        .toList();
+
     return Scaffold(
       appBar: AppBar(
         title: Text(loginData.nome),
@@ -55,30 +61,30 @@ class _HomePageState extends State<HomePage> {
               physics: const NeverScrollableScrollPhysics(),
               children: [
                 ListTile(
-                  title: Text('Hoje'),
-                  leading: Icon(Icons.sunny, color: Colors.green),
+                  title: const Text('Hoje'),
+                  leading: const Icon(Icons.sunny, color: Colors.green),
                   trailing:
                       Text(filterTable(FixedListType.HOJE).length.toString()),
                   onTap: () => openDateFilter(FixedListType.HOJE, 'Hoje'),
                 ),
                 ListTile(
-                  title: Text('Amanhã'),
-                  leading: Icon(Icons.wb_twilight, color: Colors.redAccent),
+                  title: const Text('Amanhã'),
+                  leading: const Icon(Icons.wb_twilight, color: Colors.redAccent),
                   trailing:
                       Text(filterTable(FixedListType.AMANHA).length.toString()),
                   onTap: () => openDateFilter(FixedListType.AMANHA, 'Amanha'),
                 ),
                 ListTile(
-                  title: Text('Em Breve'),
-                  leading: Icon(Icons.calendar_month, color: Colors.blueAccent),
+                  title: const Text('Em Breve'),
+                  leading: const Icon(Icons.calendar_month, color: Colors.blueAccent),
                   trailing: Text(
                       filterTable(FixedListType.EMBREVE).length.toString()),
                   onTap: () =>
                       openDateFilter(FixedListType.EMBREVE, 'Em Breve'),
                 ),
                 ListTile(
-                  title: Text('Algum Dia'),
-                  leading: Icon(Icons.calendar_today,
+                  title: const Text('Algum Dia'),
+                  leading: const Icon(Icons.calendar_today,
                       color: Colors.deepPurpleAccent),
                   trailing: Text(
                       filterTable(FixedListType.ALGUMDIA).length.toString()),
@@ -86,47 +92,47 @@ class _HomePageState extends State<HomePage> {
                       openDateFilter(FixedListType.ALGUMDIA, 'Algum Dia'),
                 ),
                 ListTile(
-                  title: Text('Concluídos'),
-                  leading:
-                      Icon(Icons.check_circle, color: Colors.white60),
+                  title: const Text('Concluídos'),
+                  leading: const Icon(Icons.check_circle, color: Colors.white60),
                   trailing:
                       Text(filterTable(FixedListType.DONE).length.toString()),
                   onTap: () => openDateFilter(FixedListType.DONE, 'Algum Dia'),
                 ),
               ],
             ),
-            Divider(),
+            const Divider(),
             ListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              itemCount: loadList.length,
+              itemCount: localList.length,
               itemBuilder: (context, int index) {
-                return loadList[index].type == ItemType.FOLDER
+                return localList[index].type == ItemType.FOLDER
                     ? GestureDetector(
-                        onLongPress: () =>
-                            openAddItem(context, ItemType.FOLDER, id: index),
+                        onLongPress: () => openAddItem(context, ItemType.FOLDER,
+                            id: loadList.indexOf(localList[index])),
                         child: ExpansionTile(
-                          title: Text(loadList[index].name),
+                          title: Text(localList[index].name),
                           leading:
-                              Icon(Icons.folder, color: loadList[index].color),
+                              Icon(Icons.folder, color: localList[index].color),
                           childrenPadding: const EdgeInsets.only(left: 10),
                           children: [
                             ListView.builder(
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
                               itemCount:
-                                  (loadList[index] as FolderItem).iList.length,
+                                  filterFolderList(localList[index].id).length,
                               itemBuilder: (BuildContext context, int i) {
-                                List<ListItem> subList =
-                                    (loadList[index] as FolderItem).iList;
+                                List<Item> subList =
+                                    filterFolderList(localList[index].id);
                                 return buildListTile(subList, i, context,
-                                    folderId: index);
+                                    folderId:
+                                        loadList.indexOf(localList[index]));
                               },
                             ),
                           ],
                         ),
                       )
-                    : buildListTile(loadList, index, context);
+                    : buildListTile(localList, index, context);
               },
             ),
           ],
@@ -143,7 +149,7 @@ class _HomePageState extends State<HomePage> {
                   openAddItem(context, ItemType.LIST);
                 },
                 child: Padding(
-                  padding: EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(10),
                   child: Row(
                     children: const [
                       Icon(Icons.add),
@@ -178,7 +184,8 @@ class _HomePageState extends State<HomePage> {
       leading: Icon(Icons.list, color: list[i].color),
       trailing: Text(taskCountFilter(list, i).toString()),
       onLongPress: () {
-        openAddItem(context, ItemType.LIST, id: i, folderId: folderId);
+        openAddItem(context, ItemType.LIST,
+            id: loadList.indexOf(list[i]), folderId: folderId);
       },
       onTap: () {
         Navigator.push(
@@ -207,7 +214,6 @@ class _HomePageState extends State<HomePage> {
 
   void openAddItem(BuildContext context, ItemType type,
       {int? id, int? folderId}) {
-    print(folderId);
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -235,6 +241,13 @@ class _HomePageState extends State<HomePage> {
         .length;
   }
 
+  List<Item> filterFolderList(int index) {
+    return loadList
+        .where((element) => element.type == ItemType.LIST)
+        .where((element) => (element as ListItem).folderId == index)
+        .toList();
+  }
+
   List<TaskList> filterTable(FixedListType type) {
     switch (type) {
       case FixedListType.HOJE:
@@ -251,7 +264,7 @@ class _HomePageState extends State<HomePage> {
           return TaskListRepository.instance.table
               .where((element) =>
                   element.date ==
-                  formatDate(DateTime.now().add(Duration(days: 1)),
+                  formatDate(DateTime.now().add(const Duration(days: 1)),
                       [dd, '/', mm, '/', yyyy]))
               .where((element) => element.finished == false)
               .toList();
