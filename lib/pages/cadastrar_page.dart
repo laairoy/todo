@@ -9,11 +9,16 @@ class CadastrarPage extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passController = TextEditingController();
+    TextEditingController _nomeController = TextEditingController();
+
+
+
 Future<void> _startPreferences() async{
   box = await Hive.openBox('cadastro');
 }
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -35,17 +40,25 @@ Future<void> _startPreferences() async{
         child: Form(
           key: _formKey,
           child: Column(
+            
             children: [
               TextFormField(
+                onTap: (){
+                  _startPreferences();
+                },
+                controller: _nomeController,
+                
                 decoration: InputDecoration(
                   hintText: 'digit seu nome',
                   label: Text('Nome'),
                 ),
                 validator: (value){
+                 
                   if(value!.isEmpty){
                     return 'Digite seu nome!';
                   }
                 },
+               
               ),
               Padding(
                 padding: EdgeInsets.only(top: 10),
@@ -62,6 +75,9 @@ Future<void> _startPreferences() async{
                       return 'Email inválido!';
                     }
                   },
+                   onChanged: (value){
+                   print(value.toString());
+                },
                 ),
               ),
               Padding(
@@ -71,7 +87,7 @@ Future<void> _startPreferences() async{
                     if (value!.isEmpty) {
                       return 'Digite o email!';
                     } else if (value != _emailController.text) {
-                      return 'Senhas são difirentes!';
+                      return 'email são difirentes!';
                     }
                   },
                   decoration: InputDecoration(
@@ -123,7 +139,15 @@ Future<void> _startPreferences() async{
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
                         _formKey.currentState!.save();
-                        Navigator.pop(context);
+                        List data = [_nomeController.text,
+                        _emailController.text,
+                        _passController.text,
+                        'true'
+                        ];
+                        print(data);
+                        box.put(_emailController.text, data);
+                        print('text: ${box.get(_emailController.text)}');
+                        //Navigator.pop(context);
                       }
                     },
                     child: const Text('Cadastrar'),
