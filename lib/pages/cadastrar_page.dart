@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:email_validator/email_validator.dart';
+import 'package:hive/hive.dart';
+
 
 class CadastrarPage extends StatelessWidget {
+  late Box box;
   CadastrarPage({Key? key}) : super(key: key);
   final _formKey = GlobalKey<FormState>();
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passController = TextEditingController();
-
+Future<void> _startPreferences() async{
+  box = await Hive.openBox('cadastro');
+}
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -14,7 +19,18 @@ class CadastrarPage extends StatelessWidget {
       appBar: AppBar(
         title: Text('Cadastrar'),
       ),
-      body: Container(
+      body: 
+      SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              child: Scrollbar(
+                child: ListView(
+                  shrinkWrap: true,
+                  scrollDirection: Axis.vertical,
+                  children: [
+      
+      Container(
         padding: EdgeInsets.all(10),
         child: Form(
           key: _formKey,
@@ -111,13 +127,24 @@ class CadastrarPage extends StatelessWidget {
                       }
                     },
                     child: const Text('Cadastrar'),
-                  ),
+           
+               ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      
+
+        ))
+                      ],
+                    ),
+                  
+              ),
+            )
+                  ],
                 ),
               ),
-            ],
-          ),
-        ),
-      ),
-    );
+            );
+      
   }
 }

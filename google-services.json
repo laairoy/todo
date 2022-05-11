@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "739405468797",
+    "project_id": "todo-emanuel-laairoy-rodrigo",
+    "storage_bucket": "todo-emanuel-laairoy-rodrigo.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:739405468797:android:db29dc7c97eacd5fef0d14",
+        "android_client_info": {
+          "package_name": "todo.elr"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "739405468797-r849cm7veuujgvttukm3o27kb3o0tsck.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCBkVwX88pmFPEfWAyMTY2D_XUk8LMGh20"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "739405468797-r849cm7veuujgvttukm3o27kb3o0tsck.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

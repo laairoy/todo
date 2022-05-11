@@ -6,11 +6,14 @@ import 'package:todo/pages/home_page.dart';
 import 'package:todo/pages/splashscreen_page.dart';
 import 'package:todo/pages/login_page.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
+
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  await Hive.initFlutter();
+  Directory dir = await getApplicationDocumentsDirectory();
+  await Hive.initFlutter(dir.path);
   Hive.registerAdapter(ListItemAdapter());
   Hive.registerAdapter(FolderItemAdapter());
   Hive.registerAdapter(ItemTypeAdapter());
