@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:todo/models/task_list.dart';
 import 'package:todo/repositories/task_list_repository.dart';
 import 'package:date_format/date_format.dart';
+import 'package:hive/hive.dart';
 
 class NewTask extends StatelessWidget {
+  late Box box;
   NewTask({Key? key, int? task, required this.onSave, required this.listId})
       : super(key: key) {
     this.task = task ?? -1;
