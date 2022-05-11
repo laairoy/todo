@@ -4,11 +4,14 @@ import 'package:hive/hive.dart';
 
 
 class CadastrarPage extends StatelessWidget {
+  late Box box;
   CadastrarPage({Key? key}) : super(key: key);
   final _formKey = GlobalKey<FormState>();
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passController = TextEditingController();
-
+Future<void> _startPreferences() async{
+  box = await Hive.openBox('cadastro');
+}
   @override
   Widget build(BuildContext context) {
     return Scaffold(
