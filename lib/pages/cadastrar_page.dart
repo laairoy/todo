@@ -14,7 +14,18 @@ class CadastrarPage extends StatelessWidget {
       appBar: AppBar(
         title: Text('Cadastrar'),
       ),
-      body: Container(
+      body: 
+      SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              child: Scrollbar(
+                child: ListView(
+                  shrinkWrap: true,
+                  scrollDirection: Axis.vertical,
+                  children: [
+      
+      Container(
         padding: EdgeInsets.all(10),
         child: Form(
           key: _formKey,
@@ -111,13 +122,24 @@ class CadastrarPage extends StatelessWidget {
                       }
                     },
                     child: const Text('Cadastrar'),
-                  ),
+           
+               ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      
+
+        ))
+                      ],
+                    ),
+                  
+              ),
+            )
+                  ],
                 ),
               ),
-            ],
-          ),
-        ),
-      ),
-    );
+            );
+      
   }
 }
