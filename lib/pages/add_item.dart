@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:todo/models/item_list.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:todo/repositories/list_repository.dart';
@@ -14,11 +15,11 @@ class AddItem extends StatelessWidget {
     nameType = type == ItemType.FOLDER ? 'Pasta' : 'Lista';
     this.id = id ?? -1;
     this.currFolderId = currFolderId ?? -1;
-    folderId = this.currFolderId == -1 ? -1 : loadList[this.currFolderId].id;
+    folderId = this.currFolderId == -1 ? -1 : loadList[this.currFolderId].key;
     currentColor = this.id == -1 ? Colors.amber : loadList[id!].color;
   }
 
-  List<Item> loadList = ListRepository.instance.loadList;
+  List<Item> loadList = Hive.box("item_list").values.toList().cast<Item>();
   int newId = ListRepository.instance.count;
   final ItemType type;
   late String nameType;
@@ -93,11 +94,11 @@ class AddItem extends StatelessWidget {
                                 padding: const EdgeInsets.only(left: 10),
                               )
                             ]),
-                            value: (e.id),
+                            value: (e.key),
                           );
                         }).toList(),
                         value: currFolderId != -1
-                            ? loadList[currFolderId].id
+                            ? loadList[currFolderId].key
                             : null,
                         onChanged: (value) {
                           folderId = value != null ? value as int : -1;
@@ -125,23 +126,28 @@ class AddItem extends StatelessWidget {
                       _formKey.currentState!.save();
                       Item item = type == ItemType.FOLDER
                           ? FolderItem(
-                              id: newId,
+                              //id: newId,
                               name: name,
                               color: currentColor,
                             )
                           : ListItem(
-                              id: newId,
+                              //id: newId,
                               name: name,
                               color: currentColor,
                               folderId: folderId);
                       if (id == -1) {
-                        loadList.add(item);
+                        //loadList.add(item);
+                        var box = Hive.box("item_list");
+                        box.add(item);
+                        //print('List: ${box.values}');
                       } else {
-                        loadList[id].name = name;
-                        loadList[id].color = currentColor;
+                        Item item = loadList[id];
+                        item.name = name;
+                        item.color = currentColor;
                         if (type == ItemType.LIST) {
-                          (loadList[id] as ListItem).folderId = folderId;
+                          (item as ListItem).folderId = folderId;
                         }
+                        Hive.box("item_list").put(item.key, item);
                       }
                       onSave();
                       Navigator.pop(context);

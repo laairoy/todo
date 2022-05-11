@@ -24,7 +24,7 @@ class _InboxState extends State<Inbox> {
   void initState() {
     super.initState();
     table = TaskListRepository.instance.table
-        .where((element) => element.listId == widget.listItem.id)
+        .where((element) => element.listId == widget.listItem.key)
         .where((element) => element.finished == false)
         .toList();
   }
@@ -39,7 +39,7 @@ class _InboxState extends State<Inbox> {
             context,
             MaterialPageRoute(
               builder: (context) => NewTask(
-                listId: widget.listItem.id,
+                listId: widget.listItem.key,
                 onSave: updateState,
               ),
             ),
@@ -99,7 +99,7 @@ class _InboxState extends State<Inbox> {
     setState(() {
       widget.onSave();
       table = TaskListRepository.instance.table
-          .where((element) => element.listId == widget.listItem.id)
+          .where((element) => element.listId == widget.listItem.key)
           .where((element) => element.finished == false)
           .toList();
     });
