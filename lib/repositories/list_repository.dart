@@ -12,13 +12,13 @@ class ListRepository {
 
   ListRepository._() {
     loadList = [
-      ListItem(id: 0, name: 'Livros', color: Colors.red),
-      FolderItem(id: 1, name: 'UTFPR', color: Colors.green),
-      ListItem(id: 2, name: 'Testes', color: Colors.blueAccent, folderId: 1),
-      FolderItem(id: 3, name: 'Tarefas', color: Colors.blueAccent),
-      ListItem(id: 4, name: 'Trabalho', color: Colors.greenAccent, folderId: 3),
-      ListItem(id: 5, name: 'Escola', color: Colors.yellowAccent, folderId: 3),
-      ListItem(id: 6, name: 'Casa', color: Colors.purple),
+      ListItem(name: 'Livros', color: Colors.red),
+      FolderItem(name: 'UTFPR', color: Colors.green),
+      ListItem(name: 'Testes', color: Colors.blueAccent, folderId: 1),
+      FolderItem(name: 'Tarefas', color: Colors.blueAccent),
+      ListItem(name: 'Trabalho', color: Colors.greenAccent, folderId: 3),
+      ListItem(name: 'Escola', color: Colors.yellowAccent, folderId: 3),
+      ListItem(name: 'Casa', color: Colors.purple),
     ];
   }
 }

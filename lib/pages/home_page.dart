@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:todo/models/fixed_list_type.dart';
 import 'package:todo/models/task_list.dart';
 import 'package:todo/pages/inbox.dart';
 import 'package:todo/pages/time_task.dart';
-import 'package:todo/repositories/list_repository.dart';
 import 'package:todo/models/login_data.dart';
 import 'package:todo/repositories/task_list_repository.dart';
 import 'package:date_format/date_format.dart';
@@ -22,7 +22,7 @@ class _HomePageState extends State<HomePage> {
   LoginData loginData = LoginData();
 
   List<TaskList> taskList = TaskListRepository.instance.table;
-  List<Item> loadList = ListRepository.instance.loadList;
+  List<Item> loadList = Hive.box("item_list").values.toList().cast<Item>();
 
   @override
   void initState() {
@@ -113,7 +113,7 @@ class _HomePageState extends State<HomePage> {
                         ? GestureDetector(
                             onDoubleTap: () => openAddItem(
                                 context, ItemType.FOLDER,
-                                id: loadList.indexOf(localList[index])),
+                                id: localList[index].key),
                             child: ExpansionTile(
                               title: Text(localList[index].name),
                               leading: Icon(Icons.folder,
@@ -124,11 +124,11 @@ class _HomePageState extends State<HomePage> {
                                   shrinkWrap: true,
                                   physics: const NeverScrollableScrollPhysics(),
                                   itemCount:
-                                      filterFolderList(localList[index].id)
+                                      filterFolderList(localList[index].key)
                                           .length,
                                   itemBuilder: (BuildContext context, int i) {
                                     List<Item> subList =
-                                        filterFolderList(localList[index].id);
+                                        filterFolderList(localList[index].key);
                                     return Container(
                                     key: Key('${subList[i].orderId}'),
                                       child: buildListTile(subList, i, context,
@@ -138,7 +138,7 @@ class _HomePageState extends State<HomePage> {
                                   },
                                   onReorder: (int oldIndex, int newIndex) {
                                     reoderList(oldIndex, newIndex,
-                                        filterFolderList(localList[index].id));
+                                        filterFolderList(localList[index].key));
                                   },
                                 ),
                               ],
@@ -196,23 +196,26 @@ class _HomePageState extends State<HomePage> {
     return GestureDetector(
       onDoubleTap: () {
         openAddItem(context, ItemType.LIST,
-            id: loadList.indexOf(list[i]), folderId: folderId);
+            id: list[i].key, folderId: folderId);
       },
-      child: ListTile(
-        title: Text(list[i].name),
-        leading: Icon(Icons.list, color: list[i].color),
-        trailing: Text(taskCountFilter(list, i).toString()),
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => Inbox(
-                listItem: list[i],
-                onSave: updateList,
+      child: Container(
+        padding: EdgeInsets.only(right: 10),
+        child: ListTile(
+          title: Text(list[i].name),
+          leading: Icon(Icons.list, color: list[i].color),
+          trailing: Text(taskCountFilter(list, i).toString()),
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => Inbox(
+                  listItem: list[i],
+                  onSave: updateList,
+                ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }
@@ -230,6 +233,7 @@ class _HomePageState extends State<HomePage> {
 
   void openAddItem(BuildContext context, ItemType type,
       {int? id, int? folderId}) {
+    print("ID = ${id}");
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -245,15 +249,17 @@ class _HomePageState extends State<HomePage> {
 
   void updateList() {
     setState(() {
-      loadList = ListRepository.instance.loadList;
+      loadList = Hive.box("item_list").values.toList().cast<Item>();
       taskList = TaskListRepository.instance.table;
       loadList.sort((a, b) => a.orderId.compareTo(b.orderId));
+
+      Hive.box("item_list").values.toList().cast<Item>().forEach((element) {print("${element.key}: ${element.name}, ${element.type}, ${element}"); });
     });
   }
 
   int taskCountFilter(var list, int index) {
     return taskList
-        .where((element) => element.listId == list[index].id)
+        .where((element) => element.listId == list[index].key)
         .where((element) => element.finished == false)
         .length;
   }
@@ -305,6 +311,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void reoderList(int oldIndex, int newIndex, var list) {
+    Box box = Hive.box("item_list");
     setState(() {
       if (oldIndex < newIndex) {
         newIndex -= 1;
@@ -313,14 +320,21 @@ class _HomePageState extends State<HomePage> {
       int newOrderId = list[newIndex].orderId;
       if (newIndex > oldIndex) {
         for (int i = newIndex; i > oldIndex; i--) {
-          list[i].orderId--;
+         Item item = box.get(list[i].key);
+         item.orderId = list[i-1].orderId;
+         box.put(item.key, item);
+          //list[i].orderId--;
         }
       } else {
         for (int i = newIndex; i < oldIndex; i++) {
-          list[i].orderId++;
+          Item item = box.get(list[i].key);
+          item.orderId = list[i+1].orderId;
+          box.put(item.key, item);
+          //list[i].orderId++;
         }
       }
       list[oldIndex].orderId = newOrderId;
+      box.put(list[oldIndex].key, list[oldIndex]);
 
       updateList();
     });
