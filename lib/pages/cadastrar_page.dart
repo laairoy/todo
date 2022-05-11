@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:email_validator/email_validator.dart';
+import 'package:hive/hive.dart';
+
 
 class CadastrarPage extends StatelessWidget {
   CadastrarPage({Key? key}) : super(key: key);
