@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:todo/pages/cadastrar_page.dart';
 import 'package:email_validator/email_validator.dart';
-
+import 'package:hive/hive.dart';
 
 class LoginPage extends StatelessWidget {
+  
+  late Box box;
+  late bool jaexiste;
+  late List _passw; 
   LoginPage({Key? key}) : super(key: key);
   final _formKey = GlobalKey<FormState>();
+  Future<void> _startPreferences() async{
+  box = await Hive.openBox('cadastro');
+}
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +28,9 @@ class LoginPage extends StatelessWidget {
           child: Column(
             children: [
               TextFormField(
+                 onTap: (){
+                  _startPreferences();
+                },
                 decoration: InputDecoration(
                   hintText: 'digite seu email!',
                   label: Text('Email'),
@@ -31,7 +41,22 @@ class LoginPage extends StatelessWidget {
                   }
                   else if(EmailValidator.validate(value) == false ){
                     return 'Email inválido!' ;
-                  }
+                  }else if ( jaexiste = false){
+				    return 'Email ou passworld  inválido!' ;
+				  
+				  }
+                },
+				onChanged: (value){
+                     //print('Name: ${box.get(value.toString())}');
+                     if (box.get(value.toString())!.isEmpty){
+                       jaexiste=false;
+                     
+                     }else{
+						print(value.toString());
+						_passw = box.get(value);
+                       jaexiste =true;
+                     }
+                   
                 },
               ),
               Padding(
@@ -44,7 +69,13 @@ class LoginPage extends StatelessWidget {
                   validator: (value) {
                     if (value!.isEmpty) {
                       return 'Digite sua senha!';
-                    }
+					  }else if (jaexiste=false){
+					  return 'Email ou passworld  inválido!' ;
+					  
+                    }else if (value.toString() != _passw[2].toString){
+						jaexiste=false;
+						return 'Email ou passworld  inválido!' ;
+					}
                   },
                   obscureText: true,
                 ),

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:hive/hive.dart';
+import 'package:todo/pages/home_page.dart';
 
 
 class CadastrarPage extends StatelessWidget {
   late Box box;
+  late bool jaexiste;
   CadastrarPage({Key? key}) : super(key: key);
   final _formKey = GlobalKey<FormState>();
   TextEditingController _emailController = TextEditingController();
@@ -73,10 +75,18 @@ Future<void> _startPreferences() async{
                       return 'Digite o email!';
                     } else if (EmailValidator.validate(value) == false) {
                       return 'Email inválido!';
-                    }
+                    } else if (jaexiste == true)
+                    return 'Email já cadastrado';
                   },
                    onChanged: (value){
-                   print(value.toString());
+                     //print('Name: ${box.get(value.toString())}');
+                     if (box.get(value.toString())!.isEmpty){
+                       jaexiste=false;
+                     // print(value.toString());
+                     }else{
+                       jaexiste =true;
+                     }
+                   
                 },
                 ),
               ),
@@ -142,13 +152,15 @@ Future<void> _startPreferences() async{
                         List data = [_nomeController.text,
                         _emailController.text,
                         _passController.text,
-                        'true'
+                        true
                         ];
-                        print(data);
+                        //print(data);
                         box.put(_emailController.text, data);
-                        print('text: ${box.get(_emailController.text)}');
-                        //Navigator.pop(context);
+                        //print('text: ${box.get(_emailController.text)}');
+                          Navigator.pushNamedAndRemoveUntil(
+                            context, '/home', ModalRoute.withName('/home'));
                       }
+                      //print(box.get(_emailController.text)[3].toString());
                     },
                     child: const Text('Cadastrar'),
            
