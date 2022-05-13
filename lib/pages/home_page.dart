@@ -237,7 +237,7 @@ class _HomePageState extends State<HomePage> {
 
   void openAddItem(BuildContext context, ItemType type,
       {int? id, int? folderId}) {
-    print("ID = ${id}");
+    //print("ID = ${id}");
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -257,9 +257,9 @@ class _HomePageState extends State<HomePage> {
       taskList = taskBox.values.toList().cast<TaskList>();
       loadList.sort((a, b) => a.orderId.compareTo(b.orderId));
 
-      itemBox.values.toList().cast<Item>().forEach((element) {
-        print("${element.key}: ${element.name}, ${element.type}, ${element}");
-      });
+      // itemBox.values.toList().cast<Item>().forEach((element) {
+      //   print("${element.key}: ${element.name}, ${element.type}, ${element}");
+      // });
     });
   }
 

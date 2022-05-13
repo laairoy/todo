@@ -77,9 +77,9 @@ class NewTask extends StatelessWidget {
                     },
                   ),
                 ),
-                Padding(
-                  padding: EdgeInsets.only(top: 10),
-                  child: Expanded(
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.only(top: 10),
                     child: TextFormField(
                       maxLines: 4,
                       decoration: InputDecoration(
