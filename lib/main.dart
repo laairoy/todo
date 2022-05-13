@@ -22,8 +22,8 @@ Future<void> main() async {
   Hive.registerAdapter(ColorAdapter());
   Hive.registerAdapter(LoginDataAdapter());
   //Hive.registerAdapter(ListTaskAdapter());
-  await Hive.openBox("item_list");
-  await Hive.openBox("task_list");
+  //await Hive.openBox("item_list");
+  //await Hive.openBox("task_list");
   await Hive.openBox("cadastro");
   runApp(const MyApp());
 }

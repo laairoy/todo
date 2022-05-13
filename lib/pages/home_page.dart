@@ -7,6 +7,8 @@ import 'package:todo/pages/time_task.dart';
 import 'package:todo/models/login_data.dart';
 import 'package:date_format/date_format.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:todo/repositories/list_repository.dart';
+import 'package:todo/repositories/task_list_repository.dart';
 
 import 'add_item.dart';
 import '../models/item_list.dart';
@@ -19,8 +21,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  Box itemBox = Hive.box("item_list");
-  Box taskBox = Hive.box("task_list");
+  Box itemBox = ListRepository.instance.itemBox;
+  Box taskBox = TaskListRepository.instance.taskBox;
 
   late List<TaskList> taskList;
   late List<Item> loadList;

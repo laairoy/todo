@@ -1,14 +1,16 @@
+import 'package:hive/hive.dart';
 import 'package:todo/models/task_list.dart';
 
 class TaskListRepository {
-  List<TaskList> table = [];
-
+  late Box taskBox;
   static final TaskListRepository _instance = TaskListRepository._();
 
   static TaskListRepository get instance => _instance;
 
-  TaskListRepository._() {
-    table = [
+  TaskListRepository._();
+
+  initData() {
+    taskBox.addAll([
       TaskList(
         name: 'Estudar',
         date: '10/05/2022',
@@ -36,7 +38,7 @@ class TaskListRepository {
         note: 'pipopipopoi',
         finished: false,
         listId: 2,
-      ),
-    ];
+      )
+    ]);
   }
 }

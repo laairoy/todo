@@ -3,6 +3,7 @@ import 'package:todo/models/item_list.dart';
 import 'package:todo/models/task_list.dart';
 import 'package:todo/pages/new_task.dart';
 import 'package:hive/hive.dart';
+import 'package:todo/repositories/task_list_repository.dart';
 
 class Inbox extends StatefulWidget {
   late Item listItem;
@@ -19,7 +20,7 @@ class Inbox extends StatefulWidget {
 class _InboxState extends State<Inbox> {
   late List<TaskList> table;
   List<TaskList> selecio = [];
-  Box box = Hive.box("task_list");
+  Box box = TaskListRepository.instance.taskBox;
 
   @override
   void initState() {

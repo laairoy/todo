@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:todo/models/task_list.dart';
 import 'package:date_format/date_format.dart';
 import 'package:hive/hive.dart';
+import 'package:todo/repositories/task_list_repository.dart';
 
 class NewTask extends StatelessWidget {
   late Box box;
 
   NewTask({Key? key, int? task, required this.onSave, required this.listId})
       : super(key: key) {
-    box = Hive.box("task_list");
+    box = TaskListRepository.instance.taskBox;
     this.task = task ?? -1;
     if (this.task != -1) {
       print(this.task);

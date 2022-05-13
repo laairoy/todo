@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:todo/models/item_list.dart';
 import 'package:is_first_run/is_first_run.dart';
-import 'package:todo/models/task_list.dart';
 
 class SplashScreen extends StatefulWidget {
   SplashScreen({Key? key}) : super(key: key);
@@ -38,7 +35,7 @@ class _SplashScreenState extends State<SplashScreen> {
   _login() async {
     bool firstRun = await IsFirstRun.isFirstCall();
     if (firstRun) {
-      _initData();
+      //_initData();
     }
     Future.delayed(const Duration(seconds: 1), () {
       Navigator.pushNamedAndRemoveUntil(
@@ -53,46 +50,4 @@ class _SplashScreenState extends State<SplashScreen> {
     });
   }
 
-  _initData() {
-    Hive.box("item_list").addAll([
-      ListItem(name: 'Livros', color: Colors.red),
-      FolderItem(name: 'UTFPR', color: Colors.green),
-      ListItem(name: 'Testes', color: Colors.blueAccent, folderId: 1),
-      FolderItem(name: 'Tarefas', color: Colors.blueAccent),
-      ListItem(name: 'Trabalho', color: Colors.greenAccent, folderId: 3),
-      ListItem(name: 'Escola', color: Colors.yellowAccent, folderId: 3),
-      ListItem(name: 'Casa', color: Colors.purple),
-    ]);
-
-    Hive.box("task_list").addAll([
-      TaskList(
-        name: 'Estudar',
-        date: '10/05/2022',
-        note: 'pampampam',
-        finished: false,
-        listId: 0,
-      ),
-      TaskList(
-        name: 'Correr',
-        date: '11/05/2022',
-        note: 'punpunpun',
-        finished: false,
-        listId: 0,
-      ),
-      TaskList(
-        name: 'Ler Harry',
-        date: '12/06/2023',
-        note: 'parapapapapara',
-        finished: true,
-        listId: 0,
-      ),
-      TaskList(
-        name: 'varrer a casa',
-        date: '',
-        note: 'pipopipopoi',
-        finished: false,
-        listId: 2,
-      ),
-    ]);
-  }
 }

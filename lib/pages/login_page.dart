@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:todo/pages/cadastrar_page.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:hive/hive.dart';
+import 'package:todo/repositories/list_repository.dart';
+import 'package:todo/repositories/task_list_repository.dart';
 
 class LoginPage extends StatelessWidget {
   late Box box;
@@ -43,7 +45,6 @@ class LoginPage extends StatelessWidget {
                 },
                 onChanged: (value) {
                   //print('Name: ${box.get(value.toString())}');
-
                 },
               ),
               Padding(
@@ -59,7 +60,8 @@ class LoginPage extends StatelessWidget {
                       return 'Digite sua senha!';
                     } else if (jaexiste == false) {
                       return 'Email ou passworld  inválido!';
-                    } else if (value.toString() != box.get(_emailController.text.trim()).password) {
+                    } else if (value.toString() !=
+                        box.get(_emailController.text.trim()).password) {
                       jaexiste = false;
                       return 'Email ou passworld  inválido!';
                     }
@@ -73,16 +75,21 @@ class LoginPage extends StatelessWidget {
                   height: 50,
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {if (
-                    box.get(_emailController.text.trim()) == null) {
-                      jaexiste = false;
-                    } else {
-                      //print(value.toString());
-                      //_email = box.get(value.trim()).email;
-                      jaexiste = true;
-                    }
+                    onPressed: () async {
+                      if (box.get(_emailController.text.trim()) == null) {
+                        jaexiste = false;
+                      } else {
+                        //print(value.toString());
+                        //_email = box.get(value.trim()).email;
+                        jaexiste = true;
+                      }
                       if (_formKey.currentState!.validate()) {
                         _formKey.currentState!.save();
+                        ListRepository.instance.itemBox = await Hive.openBox(
+                            "${_emailController.text.trim()}item_list");
+                        TaskListRepository.instance.taskBox =
+                            await Hive.openBox(
+                                "${_emailController.text.trim()}task_list");
                         Navigator.pushNamedAndRemoveUntil(
                           context,
                           '/home',

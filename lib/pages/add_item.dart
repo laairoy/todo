@@ -20,9 +20,8 @@ class AddItem extends StatelessWidget {
     currentColor = this.id == -1 ? Colors.amber : box.get(id!).color;
   }
 
-  Box box = Hive.box("item_list");
+  Box box = ListRepository.instance.itemBox;
   late List<Item> loadList;
-  int newId = ListRepository.instance.count;
   final ItemType type;
   late String nameType;
   late var id;
@@ -139,7 +138,7 @@ class AddItem extends StatelessWidget {
                               folderId: folderId);
                       if (id == -1) {
                         //loadList.add(item);
-                        var box = Hive.box("item_list");
+                        //var box = Hive.box("item_list");
                         box.add(item);
                         //print('List: ${box.values}');
                       } else {

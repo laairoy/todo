@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:todo/models/fixed_list_type.dart';
 import 'package:todo/models/task_list.dart';
 import 'package:todo/pages/new_task.dart';
-import 'package:todo/repositories/task_list_repository.dart';
 
 class TimeTaskList extends StatefulWidget {
   final FixedListType type;
@@ -45,8 +44,7 @@ class _TimeTaskListState extends State<TimeTaskList> {
                   MaterialPageRoute(
                     builder: (context) => NewTask(
                       onSave: updateState,
-                      task: TaskListRepository.instance.table
-                          .indexOf(table[task]),
+                      task: table[task].key,
                       listId: table[task].listId,
                     ),
                   ),

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:hive/hive.dart';
 import 'package:todo/models/login_data.dart';
+import 'package:todo/repositories/list_repository.dart';
+import 'package:todo/repositories/task_list_repository.dart';
 
 class CadastrarPage extends StatelessWidget {
   late Box box;
@@ -130,11 +132,13 @@ class CadastrarPage extends StatelessWidget {
                                   height: 50,
                                   width: double.infinity,
                                   child: ElevatedButton(
-                                    onPressed: () {
-                                      if (box.get(_emailController.text.trim()) != null) {
+                                    onPressed: () async {
+                                      if (box.get(
+                                              _emailController.text.trim()) !=
+                                          null) {
                                         jaexiste = true;
                                         // print(value.toString());
-                                      } else{
+                                      } else {
                                         jaexiste = false;
                                       }
                                       if (_formKey.currentState!.validate()) {
@@ -148,11 +152,19 @@ class CadastrarPage extends StatelessWidget {
                                         box.put(
                                             _emailController.text.trim(), data);
                                         //print('text: ${box.get(_emailController.text)}');
+                                        ListRepository.instance.itemBox =
+                                            await Hive.openBox(
+                                                "${data.email}item_list");
+                                        ListRepository.instance.initData();
+                                        TaskListRepository.instance.taskBox =
+                                            await Hive.openBox(
+                                                "${data.email}task_list");
+                                        TaskListRepository.instance.initData();
                                         Navigator.pushNamedAndRemoveUntil(
-                                            context,
-                                            '/home',
-                                            ModalRoute.withName('/home'),
-                                            arguments: data,
+                                          context,
+                                          '/home',
+                                          ModalRoute.withName('/home'),
+                                          arguments: data,
                                         );
                                       }
                                       //print(box.get(_emailController.text)[3].toString());
