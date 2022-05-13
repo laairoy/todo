@@ -3,6 +3,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:todo/models/item_list.dart';
 import 'package:todo/models/login_data.dart';
 import 'package:is_first_run/is_first_run.dart';
+import 'package:todo/models/task_list.dart';
 
 class SplashScreen extends StatefulWidget {
   SplashScreen({Key? key}) : super(key: key);
@@ -60,6 +61,37 @@ class _SplashScreenState extends State<SplashScreen> {
       ListItem(name: 'Trabalho', color: Colors.greenAccent, folderId: 3),
       ListItem(name: 'Escola', color: Colors.yellowAccent, folderId: 3),
       ListItem(name: 'Casa', color: Colors.purple),
+    ]);
+
+    Hive.box("task_list").addAll([
+      TaskList(
+        name: 'Estudar',
+        date: '10/05/2022',
+        note: 'pampampam',
+        finished: false,
+        listId: 0,
+      ),
+      TaskList(
+        name: 'Correr',
+        date: '11/05/2022',
+        note: 'punpunpun',
+        finished: false,
+        listId: 0,
+      ),
+      TaskList(
+        name: 'Ler Harry',
+        date: '12/06/2023',
+        note: 'parapapapapara',
+        finished: true,
+        listId: 0,
+      ),
+      TaskList(
+        name: 'varrer a casa',
+        date: '',
+        note: 'pipopipopoi',
+        finished: false,
+        listId: 2,
+      ),
     ]);
   }
 }

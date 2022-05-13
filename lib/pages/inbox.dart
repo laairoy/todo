@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:todo/models/item_list.dart';
 import 'package:todo/models/task_list.dart';
 import 'package:todo/pages/new_task.dart';
-import 'package:todo/repositories/task_list_repository.dart';
 import 'package:hive/hive.dart';
 
 class Inbox extends StatefulWidget {
@@ -20,14 +19,21 @@ class Inbox extends StatefulWidget {
 class _InboxState extends State<Inbox> {
   late List<TaskList> table;
   List<TaskList> selecio = [];
+  Box box = Hive.box("task_list");
 
   @override
   void initState() {
     super.initState();
-    table = TaskListRepository.instance.table
+    // table = TaskListRepository.instance.table
+    //     .where((element) => element.listId == widget.listItem.key)
+    //     .where((element) => element.finished == false)
+    //     .toList();
+    table = box
+        .values
         .where((element) => element.listId == widget.listItem.key)
         .where((element) => element.finished == false)
-        .toList();
+        .toList()
+        .cast<TaskList>();
   }
 
   @override
@@ -63,8 +69,7 @@ class _InboxState extends State<Inbox> {
                   MaterialPageRoute(
                     builder: (context) => NewTask(
                       onSave: updateState,
-                      task: TaskListRepository.instance.table
-                          .indexOf(table[task]),
+                      task: table[task].key,
                       listId: table[task].listId,
                     ),
                   ),
@@ -82,6 +87,7 @@ class _InboxState extends State<Inbox> {
                 onChanged: (bool? value) {
                   setState(() {
                     table[task].finished = value!;
+                    box.put(table[task].key, table[task]);
                   });
                   Future.delayed(Duration(milliseconds: 500), updateState);
                 },
@@ -99,10 +105,12 @@ class _InboxState extends State<Inbox> {
   void updateState() {
     setState(() {
       widget.onSave();
-      table = TaskListRepository.instance.table
+      table = box
+          .values
           .where((element) => element.listId == widget.listItem.key)
           .where((element) => element.finished == false)
-          .toList();
+          .toList()
+          .cast<TaskList>();
     });
   }
 }

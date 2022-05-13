@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:hive/hive.dart';
-import 'package:todo/pages/home_page.dart';
 
 
 class CadastrarPage extends StatelessWidget {
@@ -17,6 +16,7 @@ class CadastrarPage extends StatelessWidget {
 
 Future<void> _startPreferences() async{
   box = await Hive.openBox('cadastro');
+  jaexiste = false;
 }
   @override
   Widget build(BuildContext context) {

@@ -11,7 +11,7 @@ class LoginPage extends StatelessWidget {
   LoginPage({Key? key}) : super(key: key);
   final _formKey = GlobalKey<FormState>();
   Future<void> _startPreferences() async{
-  box = await Hive.openBox('cadastro');
+  box = Hive.box('cadastro');
 }
 
   @override

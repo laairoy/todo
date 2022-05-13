@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:todo/models/task_list.dart';
-import 'package:todo/repositories/task_list_repository.dart';
 import 'package:date_format/date_format.dart';
 import 'package:hive/hive.dart';
 
 class NewTask extends StatelessWidget {
   late Box box;
+
   NewTask({Key? key, int? task, required this.onSave, required this.listId})
       : super(key: key) {
+    box = Hive.box("task_list");
+    table = box.values.toList().cast<TaskList>();
     this.task = task ?? -1;
     if (this.task != -1) {
       _nameController.text = table[this.task].name;
@@ -19,7 +21,7 @@ class NewTask extends StatelessWidget {
   int listId;
   late int task;
   final void Function() onSave;
-  List<TaskList> table = TaskListRepository.instance.table;
+  late List<TaskList> table;
   final _formKey = GlobalKey<FormState>();
   TextEditingController _nameController = TextEditingController();
   TextEditingController _dateController = TextEditingController();
@@ -96,18 +98,14 @@ class NewTask extends StatelessWidget {
                           if (_formKey.currentState!.validate()) {
                             _formKey.currentState!.save();
                             if (task != -1) {
-                              TaskListRepository.instance.table[task].listId =
-                                  listId;
-                              TaskListRepository.instance.table[task].note =
-                                  _noteController.text;
-                              TaskListRepository.instance.table[task].name =
-                                  _nameController.text;
-                              TaskListRepository.instance.table[task].date =
-                                  _dateController.text;
-                              TaskListRepository.instance.table[task].finished =
-                                  false;
+                              table[task].listId = listId;
+                              table[task].note = _noteController.text;
+                              table[task].name = _nameController.text;
+                              table[task].date = _dateController.text;
+                              table[task].finished = false;
+                              box.put(table[task].key, table[task]);
                             } else {
-                              TaskListRepository.instance.table.add(TaskList(
+                              box.add(TaskList(
                                   name: _nameController.text,
                                   note: _noteController.text,
                                   date: _dateController.text,

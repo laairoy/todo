@@ -15,13 +15,14 @@ Future<void> main() async {
   Directory dir = await getApplicationDocumentsDirectory();
   await Hive.initFlutter(dir.path);
   Hive.registerAdapter(ListItemAdapter());
+  Hive.registerAdapter(TaskListAdapter());
   Hive.registerAdapter(FolderItemAdapter());
   Hive.registerAdapter(ItemTypeAdapter());
   Hive.registerAdapter(ColorAdapter());
   //Hive.registerAdapter(ListTaskAdapter());
   await Hive.openBox("item_list");
   await Hive.openBox("task_list");
-
+  await Hive.openBox("cadastro");
   runApp(const MyApp());
 }
 

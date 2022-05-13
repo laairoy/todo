@@ -5,7 +5,6 @@ import 'package:todo/models/task_list.dart';
 import 'package:todo/pages/inbox.dart';
 import 'package:todo/pages/time_task.dart';
 import 'package:todo/models/login_data.dart';
-import 'package:todo/repositories/task_list_repository.dart';
 import 'package:date_format/date_format.dart';
 
 import 'add_item.dart';
@@ -20,13 +19,17 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   LoginData loginData = LoginData();
+  Box itemBox = Hive.box("item_list");
+  Box taskBox = Hive.box("task_list");
 
-  List<TaskList> taskList = TaskListRepository.instance.table;
-  List<Item> loadList = Hive.box("item_list").values.toList().cast<Item>();
+  late List<TaskList> taskList;
+  late List<Item> loadList;
 
   @override
   void initState() {
     super.initState();
+    loadList = itemBox.values.toList().cast<Item>();
+    taskList = taskBox.values.toList().cast<TaskList>();
     loadList.sort((a, b) => a.orderId.compareTo(b.orderId));
   }
 
@@ -130,10 +133,10 @@ class _HomePageState extends State<HomePage> {
                                     List<Item> subList =
                                         filterFolderList(localList[index].key);
                                     return Container(
-                                    key: Key('${subList[i].orderId}'),
+                                      key: Key('${subList[i].orderId}'),
                                       child: buildListTile(subList, i, context,
-                                          folderId:
-                                              loadList.indexOf(localList[index])),
+                                          folderId: loadList
+                                              .indexOf(localList[index])),
                                     );
                                   },
                                   onReorder: (int oldIndex, int newIndex) {
@@ -249,11 +252,13 @@ class _HomePageState extends State<HomePage> {
 
   void updateList() {
     setState(() {
-      loadList = Hive.box("item_list").values.toList().cast<Item>();
-      taskList = TaskListRepository.instance.table;
+      loadList = itemBox.values.toList().cast<Item>();
+      taskList = taskBox.values.toList().cast<TaskList>();
       loadList.sort((a, b) => a.orderId.compareTo(b.orderId));
 
-      Hive.box("item_list").values.toList().cast<Item>().forEach((element) {print("${element.key}: ${element.name}, ${element.type}, ${element}"); });
+      itemBox.values.toList().cast<Item>().forEach((element) {
+        print("${element.key}: ${element.name}, ${element.type}, ${element}");
+      });
     });
   }
 
@@ -275,43 +280,47 @@ class _HomePageState extends State<HomePage> {
     switch (type) {
       case FixedListType.HOJE:
         {
-          return TaskListRepository.instance.table
+          return taskBox.values
               .where((element) =>
                   element.date ==
                   formatDate(DateTime.now(), [dd, '/', mm, '/', yyyy]))
               .where((element) => element.finished == false)
-              .toList();
+              .toList()
+              .cast<TaskList>();
         }
       case FixedListType.AMANHA:
         {
-          return TaskListRepository.instance.table
+          return taskBox.values
               .where((element) =>
                   element.date ==
                   formatDate(DateTime.now().add(const Duration(days: 1)),
                       [dd, '/', mm, '/', yyyy]))
               .where((element) => element.finished == false)
-              .toList();
+              .toList()
+              .cast<TaskList>();
         }
       case FixedListType.EMBREVE:
         {
-          return TaskListRepository.instance.table
+          return taskBox.values
               .where((element) => element.date != '')
               .where((element) => element.finished == false)
-              .toList();
+              .toList()
+              .cast<TaskList>();
         }
       case FixedListType.ALGUMDIA:
-        return TaskListRepository.instance.table
+        return taskBox.values
             .where((element) => element.date == '')
             .where((element) => element.finished == false)
-            .toList();
+            .toList()
+            .cast<TaskList>();
     }
-    return TaskListRepository.instance.table
+    return taskBox.values
         .where((element) => element.finished == true)
-        .toList();
+        .toList()
+        .cast<TaskList>();
   }
 
   void reoderList(int oldIndex, int newIndex, var list) {
-    Box box = Hive.box("item_list");
     setState(() {
       if (oldIndex < newIndex) {
         newIndex -= 1;
@@ -320,21 +329,21 @@ class _HomePageState extends State<HomePage> {
       int newOrderId = list[newIndex].orderId;
       if (newIndex > oldIndex) {
         for (int i = newIndex; i > oldIndex; i--) {
-         Item item = box.get(list[i].key);
-         item.orderId = list[i-1].orderId;
-         box.put(item.key, item);
+          Item item = itemBox.get(list[i].key);
+          item.orderId = list[i - 1].orderId;
+          itemBox.put(item.key, item);
           //list[i].orderId--;
         }
       } else {
         for (int i = newIndex; i < oldIndex; i++) {
-          Item item = box.get(list[i].key);
-          item.orderId = list[i+1].orderId;
-          box.put(item.key, item);
+          Item item = itemBox.get(list[i].key);
+          item.orderId = list[i + 1].orderId;
+          itemBox.put(item.key, item);
           //list[i].orderId++;
         }
       }
       list[oldIndex].orderId = newOrderId;
-      box.put(list[oldIndex].key, list[oldIndex]);
+      itemBox.put(list[oldIndex].key, list[oldIndex]);
 
       updateList();
     });
