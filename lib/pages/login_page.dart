@@ -4,15 +4,16 @@ import 'package:email_validator/email_validator.dart';
 import 'package:hive/hive.dart';
 
 class LoginPage extends StatelessWidget {
-  
   late Box box;
   late bool jaexiste;
-  late List _passw; 
-  LoginPage({Key? key}) : super(key: key);
+
+  LoginPage({Key? key}) : super(key: key) {
+    box = Hive.box('cadastro');
+  }
+
   final _formKey = GlobalKey<FormState>();
-  Future<void> _startPreferences() async{
-  box = Hive.box('cadastro');
-}
+  TextEditingController _emailController = TextEditingController();
+  TextEditingController _passController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -28,9 +29,7 @@ class LoginPage extends StatelessWidget {
           child: Column(
             children: [
               TextFormField(
-                 onTap: (){
-                  _startPreferences();
-                },
+                controller: _emailController,
                 decoration: InputDecoration(
                   hintText: 'digite seu email!',
                   label: Text('Email'),
@@ -38,30 +37,19 @@ class LoginPage extends StatelessWidget {
                 validator: (value) {
                   if (value!.isEmpty) {
                     return 'Digite um email!';
+                  } else if (EmailValidator.validate(value) == false) {
+                    return 'Email inválido!';
                   }
-                  else if(EmailValidator.validate(value) == false ){
-                    return 'Email inválido!' ;
-                  }else if ( jaexiste = false){
-				    return 'Email ou passworld  inválido!' ;
-				  
-				  }
                 },
-				onChanged: (value){
-                     //print('Name: ${box.get(value.toString())}');
-                     if (box.get(value.toString())!.isEmpty){
-                       jaexiste=false;
-                     
-                     }else{
-						print(value.toString());
-						_passw = box.get(value);
-                       jaexiste =true;
-                     }
-                   
+                onChanged: (value) {
+                  //print('Name: ${box.get(value.toString())}');
+
                 },
               ),
               Padding(
                 padding: EdgeInsets.only(top: 20),
                 child: TextFormField(
+                  controller: _passController,
                   decoration: InputDecoration(
                     hintText: 'digita a senha!',
                     label: Text('Senha'),
@@ -69,13 +57,12 @@ class LoginPage extends StatelessWidget {
                   validator: (value) {
                     if (value!.isEmpty) {
                       return 'Digite sua senha!';
-					  }else if (jaexiste=false){
-					  return 'Email ou passworld  inválido!' ;
-					  
-                    }else if (value.toString() != _passw[2].toString){
-						jaexiste=false;
-						return 'Email ou passworld  inválido!' ;
-					}
+                    } else if (jaexiste == false) {
+                      return 'Email ou passworld  inválido!';
+                    } else if (value.toString() != box.get(_emailController.text.trim()).password) {
+                      jaexiste = false;
+                      return 'Email ou passworld  inválido!';
+                    }
                   },
                   obscureText: true,
                 ),
@@ -86,11 +73,22 @@ class LoginPage extends StatelessWidget {
                   height: 50,
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {
+                    onPressed: () {if (
+                    box.get(_emailController.text.trim()) == null) {
+                      jaexiste = false;
+                    } else {
+                      //print(value.toString());
+                      //_email = box.get(value.trim()).email;
+                      jaexiste = true;
+                    }
                       if (_formKey.currentState!.validate()) {
                         _formKey.currentState!.save();
                         Navigator.pushNamedAndRemoveUntil(
-                            context, '/home', ModalRoute.withName('/home'));
+                          context,
+                          '/home',
+                          ModalRoute.withName('/home'),
+                          arguments: box.get(_emailController.text.trim()),
+                        );
                       }
                     },
                     child: const Text('Logar'),

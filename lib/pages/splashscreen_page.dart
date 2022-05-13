@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:todo/models/item_list.dart';
-import 'package:todo/models/login_data.dart';
 import 'package:is_first_run/is_first_run.dart';
 import 'package:todo/models/task_list.dart';
 
@@ -13,7 +12,7 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  LoginData loginData = LoginData();
+  //LoginData loginData = LoginData();
 
   @override
   void initState() {
@@ -42,13 +41,15 @@ class _SplashScreenState extends State<SplashScreen> {
       _initData();
     }
     Future.delayed(const Duration(seconds: 1), () {
-      if (loginData.logged == true) {
-        Navigator.pushNamedAndRemoveUntil(
-            context, '/home', ModalRoute.withName('/home'));
-      } else {
-        Navigator.pushNamedAndRemoveUntil(
-            context, '/login', ModalRoute.withName('/login'));
-      }
+      Navigator.pushNamedAndRemoveUntil(
+          context, '/login', ModalRoute.withName('/login'));
+      // if (loginData.logged == true) {
+      //   Navigator.pushNamedAndRemoveUntil(
+      //       context, '/home', ModalRoute.withName('/home'));
+      // } else {
+      //   Navigator.pushNamedAndRemoveUntil(
+      //       context, '/login', ModalRoute.withName('/login'));
+      // }
     });
   }
 

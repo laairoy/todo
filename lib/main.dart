@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:todo/models/color_adapter.dart';
 import 'package:todo/models/item_list.dart';
+import 'package:todo/models/login_data.dart';
 import 'package:todo/models/task_list.dart';
 import 'package:todo/pages/home_page.dart';
 import 'package:todo/pages/splashscreen_page.dart';
@@ -19,6 +20,7 @@ Future<void> main() async {
   Hive.registerAdapter(FolderItemAdapter());
   Hive.registerAdapter(ItemTypeAdapter());
   Hive.registerAdapter(ColorAdapter());
+  Hive.registerAdapter(LoginDataAdapter());
   //Hive.registerAdapter(ListTaskAdapter());
   await Hive.openBox("item_list");
   await Hive.openBox("task_list");

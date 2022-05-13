@@ -18,7 +18,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  LoginData loginData = LoginData();
   Box itemBox = Hive.box("item_list");
   Box taskBox = Hive.box("task_list");
 
@@ -35,6 +34,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    LoginData loginData =
+        ModalRoute.of(context)!.settings.arguments as LoginData;
     List<Item> localList = loadList
         .where((element) => (element.type == ItemType.FOLDER ||
             (element.type == ItemType.LIST &&
