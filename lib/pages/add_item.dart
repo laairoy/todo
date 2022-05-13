@@ -12,14 +12,16 @@ class AddItem extends StatelessWidget {
     int? id,
     int? currFolderId,
   }) : super(key: key) {
+    loadList = box.values.toList().cast<Item>();
     nameType = type == ItemType.FOLDER ? 'Pasta' : 'Lista';
     this.id = id ?? -1;
     this.currFolderId = currFolderId ?? -1;
-    folderId = this.currFolderId == -1 ? -1 : loadList[this.currFolderId].key;
-    currentColor = this.id == -1 ? Colors.amber : loadList[id!].color;
+    folderId = this.currFolderId == -1 ? -1 : box.get(this.currFolderId).key;
+    currentColor = this.id == -1 ? Colors.amber : box.get(id!).color;
   }
 
-  List<Item> loadList = Hive.box("item_list").values.toList().cast<Item>();
+  Box box = Hive.box("item_list");
+  late List<Item> loadList;
   int newId = ListRepository.instance.count;
   final ItemType type;
   late String nameType;
@@ -42,7 +44,7 @@ class AddItem extends StatelessWidget {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: Text('Adicionar $nameType'),
+        title: id == -1 ?Text('Adicionar $nameType') : Text('Editar $nameType'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(10),
@@ -51,7 +53,7 @@ class AddItem extends StatelessWidget {
           child: Column(
             children: [
               TextFormField(
-                initialValue: id != -1 ? loadList[id].name : '',
+                initialValue: id != -1 ? box.get(id).name : '',
                 decoration: const InputDecoration(
                   label: Text('Nome'),
                 ),
@@ -98,7 +100,7 @@ class AddItem extends StatelessWidget {
                           );
                         }).toList(),
                         value: currFolderId != -1
-                            ? loadList[currFolderId].key
+                            ? box.get(currFolderId).key
                             : null,
                         onChanged: (value) {
                           folderId = value != null ? value as int : -1;
@@ -141,13 +143,13 @@ class AddItem extends StatelessWidget {
                         box.add(item);
                         //print('List: ${box.values}');
                       } else {
-                        Item item = loadList[id];
+                        Item item = box.get(id);
                         item.name = name;
                         item.color = currentColor;
                         if (type == ItemType.LIST) {
                           (item as ListItem).folderId = folderId;
                         }
-                        Hive.box("item_list").put(item.key, item);
+                        box.put(item.key, item);
                       }
                       onSave();
                       Navigator.pop(context);

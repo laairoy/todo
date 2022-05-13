@@ -30,7 +30,7 @@ class NewTask extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('Criar nova tarefa'),
+          title: task == -1 ? Text('Criar nova tarefa') : Text('Editar tarefa'),
           actions: [
             if(task != -1) IconButton(
               onPressed: () => showDialog(
