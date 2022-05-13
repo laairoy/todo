@@ -57,6 +57,14 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ),
+        actions: [
+          IconButton(
+              onPressed: () {
+                Navigator.pushNamedAndRemoveUntil(
+                    context, '/login', ModalRoute.withName('/login'));
+              },
+              icon: Icon(Icons.logout))
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -162,32 +170,26 @@ class _HomePageState extends State<HomePage> {
                               title: Text(localList[index].name),
                               leading: Icon(Icons.folder,
                                   color: localList[index].color),
-                              childrenPadding:
-                                  const EdgeInsets.only(left: 10),
+                              childrenPadding: const EdgeInsets.only(left: 10),
                               children: [
                                 ReorderableListView.builder(
                                   shrinkWrap: true,
-                                  physics:
-                                      const NeverScrollableScrollPhysics(),
+                                  physics: const NeverScrollableScrollPhysics(),
                                   itemCount:
                                       filterFolderList(localList[index].key)
                                           .length,
                                   itemBuilder: (BuildContext context, int i) {
-                                    List<Item> subList = filterFolderList(
-                                        localList[index].key);
+                                    List<Item> subList =
+                                        filterFolderList(localList[index].key);
                                     return Container(
                                       key: Key('${subList[i].orderId}'),
-                                      child: buildListTile(
-                                          subList, i, context,
+                                      child: buildListTile(subList, i, context,
                                           folderId: localList[index].key),
                                     );
                                   },
                                   onReorder: (int oldIndex, int newIndex) {
-                                    reoderList(
-                                        oldIndex,
-                                        newIndex,
-                                        filterFolderList(
-                                            localList[index].key));
+                                    reoderList(oldIndex, newIndex,
+                                        filterFolderList(localList[index].key));
                                   },
                                 ),
                               ],
