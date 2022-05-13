@@ -181,8 +181,7 @@ class _HomePageState extends State<HomePage> {
                                         key: Key('${subList[i].orderId}'),
                                         child: buildListTile(
                                             subList, i, context,
-                                            folderId: loadList
-                                                .indexOf(localList[index])),
+                                            folderId: localList[index].key),
                                       );
                                     },
                                     onReorder: (int oldIndex, int newIndex) {

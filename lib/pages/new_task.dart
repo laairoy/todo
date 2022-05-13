@@ -9,19 +9,18 @@ class NewTask extends StatelessWidget {
   NewTask({Key? key, int? task, required this.onSave, required this.listId})
       : super(key: key) {
     box = Hive.box("task_list");
-    table = box.values.toList().cast<TaskList>();
     this.task = task ?? -1;
     if (this.task != -1) {
-      _nameController.text = table[this.task].name;
-      _dateController.text = table[this.task].date;
-      _noteController.text = table[this.task].note;
+      print(this.task);
+      _nameController.text = box.get(task).name;
+      _dateController.text = box.get(task).date;
+      _noteController.text = box.get(task).note;
     }
   }
 
   int listId;
   late int task;
   final void Function() onSave;
-  late List<TaskList> table;
   final _formKey = GlobalKey<FormState>();
   TextEditingController _nameController = TextEditingController();
   TextEditingController _dateController = TextEditingController();
@@ -32,6 +31,31 @@ class NewTask extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(
           title: Text('Criar nova tarefa'),
+          actions: [
+            if(task != -1) IconButton(
+              onPressed: () => showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: Text("Deletar"),
+                  content: Text("Deseja realmente deletar a tarefa?"),
+                  actions: [
+                    ElevatedButton(
+                      onPressed: () => {
+                        //deleteItem(context, list[i].key),
+                        box.delete(task),
+                        onSave(),
+                        Navigator.of(context).pop(),
+                        Navigator.pop(context)
+                      },
+                      child: Text("Deletar"),
+                    )
+                  ],
+                ),
+              ),
+              icon: Icon(Icons.delete),
+              tooltip: 'Deletar tarefa',
+            ),
+          ],
         ),
         body: Padding(
           padding: const EdgeInsets.all(10),
@@ -98,12 +122,13 @@ class NewTask extends StatelessWidget {
                           if (_formKey.currentState!.validate()) {
                             _formKey.currentState!.save();
                             if (task != -1) {
-                              table[task].listId = listId;
-                              table[task].note = _noteController.text;
-                              table[task].name = _nameController.text;
-                              table[task].date = _dateController.text;
-                              table[task].finished = false;
-                              box.put(table[task].key, table[task]);
+                              TaskList tl = box.get(task);
+                              tl.listId = listId;
+                              tl.note = _noteController.text;
+                              tl.name = _nameController.text;
+                              tl.date = _dateController.text;
+                              tl.finished = false;
+                              box.put(tl.key, tl);
                             } else {
                               box.add(TaskList(
                                   name: _nameController.text,
