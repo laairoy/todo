@@ -6,6 +6,7 @@ import 'package:todo/pages/inbox.dart';
 import 'package:todo/pages/time_task.dart';
 import 'package:todo/models/login_data.dart';
 import 'package:date_format/date_format.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 import 'add_item.dart';
 import '../models/item_list.dart';
@@ -114,38 +115,86 @@ class _HomePageState extends State<HomePage> {
                   return Container(
                     key: Key('${localList[index].orderId}'),
                     child: localList[index].type == ItemType.FOLDER
-                        ? GestureDetector(
-                            onDoubleTap: () => openAddItem(
-                                context, ItemType.FOLDER,
-                                id: localList[index].key),
-                            child: ExpansionTile(
-                              title: Text(localList[index].name),
-                              leading: Icon(Icons.folder,
-                                  color: localList[index].color),
-                              childrenPadding: const EdgeInsets.only(left: 10),
+                        ? Slidable(
+                            endActionPane: ActionPane(
+                              motion: ScrollMotion(),
                               children: [
-                                ReorderableListView.builder(
-                                  shrinkWrap: true,
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  itemCount:
-                                      filterFolderList(localList[index].key)
-                                          .length,
-                                  itemBuilder: (BuildContext context, int i) {
-                                    List<Item> subList =
-                                        filterFolderList(localList[index].key);
-                                    return Container(
-                                      key: Key('${subList[i].orderId}'),
-                                      child: buildListTile(subList, i, context,
-                                          folderId: loadList
-                                              .indexOf(localList[index])),
-                                    );
-                                  },
-                                  onReorder: (int oldIndex, int newIndex) {
-                                    reoderList(oldIndex, newIndex,
-                                        filterFolderList(localList[index].key));
-                                  },
+                                SlidableAction(
+                                  // An action can be bigger than the others.
+                                  onPressed: (context) => openAddItem(
+                                      context, ItemType.FOLDER,
+                                      id: localList[index].key),
+                                  backgroundColor: Colors.blueAccent,
+                                  foregroundColor: Colors.white,
+                                  icon: Icons.edit,
+                                  label: 'Editar',
+                                ),
+                                SlidableAction(
+                                  //onPressed: (context) => deleteItem(context, list[i].key),
+                                  onPressed: (context) => showDialog(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      title: Text("Deletar"),
+                                      content: Text(
+                                          "Deseja realmente deletar a pasta ${loadList[index].name} e suas listas e tarefas associadas?"),
+                                      actions: [
+                                        ElevatedButton(
+                                          onPressed: () => {
+                                            deleteFolder(
+                                                context, localList[index].key),
+                                            Navigator.of(context).pop()
+                                          },
+                                          child: Text("Deletar"),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                  backgroundColor: Colors.redAccent,
+                                  foregroundColor: Colors.white,
+                                  icon: Icons.delete,
+                                  label: 'Deletar',
                                 ),
                               ],
+                            ),
+                            child: GestureDetector(
+                              onDoubleTap: () => openAddItem(
+                                  context, ItemType.FOLDER,
+                                  id: localList[index].key),
+                              child: ExpansionTile(
+                                title: Text(localList[index].name),
+                                leading: Icon(Icons.folder,
+                                    color: localList[index].color),
+                                childrenPadding:
+                                    const EdgeInsets.only(left: 10),
+                                children: [
+                                  ReorderableListView.builder(
+                                    shrinkWrap: true,
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    itemCount:
+                                        filterFolderList(localList[index].key)
+                                            .length,
+                                    itemBuilder: (BuildContext context, int i) {
+                                      List<Item> subList = filterFolderList(
+                                          localList[index].key);
+                                      return Container(
+                                        key: Key('${subList[i].orderId}'),
+                                        child: buildListTile(
+                                            subList, i, context,
+                                            folderId: loadList
+                                                .indexOf(localList[index])),
+                                      );
+                                    },
+                                    onReorder: (int oldIndex, int newIndex) {
+                                      reoderList(
+                                          oldIndex,
+                                          newIndex,
+                                          filterFolderList(
+                                              localList[index].key));
+                                    },
+                                  ),
+                                ],
+                              ),
                             ),
                           )
                         : buildListTile(localList, index, context),
@@ -197,28 +246,68 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget buildListTile(var list, int i, BuildContext context, {int? folderId}) {
-    return GestureDetector(
-      onDoubleTap: () {
-        openAddItem(context, ItemType.LIST,
-            id: list[i].key, folderId: folderId);
-      },
-      child: Container(
-        padding: EdgeInsets.only(right: 10),
-        child: ListTile(
-          title: Text(list[i].name),
-          leading: Icon(Icons.list, color: list[i].color),
-          trailing: Text(taskCountFilter(list, i).toString()),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => Inbox(
-                  listItem: list[i],
-                  onSave: updateList,
-                ),
+    return Slidable(
+      endActionPane: ActionPane(
+        motion: ScrollMotion(),
+        children: [
+          SlidableAction(
+            // An action can be bigger than the others.
+            onPressed: (context) => openAddItem(context, ItemType.LIST,
+                id: list[i].key, folderId: folderId),
+            backgroundColor: Colors.blueAccent,
+            foregroundColor: Colors.white,
+            icon: Icons.edit,
+            label: 'Editar',
+          ),
+          SlidableAction(
+            //onPressed: (context) => deleteItem(context, list[i].key),
+            onPressed: (context) => showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: Text("Deletar"),
+                content: Text(
+                    "Deseja realmente deletar a lista ${list[i].name} e as tarefas associadas?"),
+                actions: [
+                  ElevatedButton(
+                    onPressed: () => {
+                      deleteItem(context, list[i].key),
+                      Navigator.of(context).pop()
+                    },
+                    child: Text("Deletar"),
+                  )
+                ],
               ),
-            );
-          },
+            ),
+            backgroundColor: Colors.redAccent,
+            foregroundColor: Colors.white,
+            icon: Icons.delete,
+            label: 'Deletar',
+          ),
+        ],
+      ),
+      child: GestureDetector(
+        // onDoubleTap: () {
+        //   openAddItem(context, ItemType.LIST,
+        //       id: list[i].key, folderId: folderId);
+        // },
+        child: Container(
+          padding: EdgeInsets.only(right: 10),
+          child: ListTile(
+            title: Text(list[i].name),
+            leading: Icon(Icons.list, color: list[i].color),
+            trailing: Text(taskCountFilter(list, i).toString()),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Inbox(
+                    listItem: list[i],
+                    onSave: updateList,
+                  ),
+                ),
+              );
+            },
+          ),
         ),
       ),
     );
@@ -249,6 +338,31 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
+  }
+
+  void deleteItem(BuildContext context, int id) {
+    taskBox.deleteAll(
+      taskBox.values.where((element) => element.listId == id).map((e) => e.key),
+    );
+    itemBox.delete(id);
+    updateList();
+  }
+
+  void deleteFolder(BuildContext context, int id) {
+    var folderLists = itemBox.values
+        .where((element) => element.type == ItemType.LIST)
+        .where((element) => (element as ListItem).folderId == id)
+        .map((e) => e.key)
+        .toList();
+
+    var taskLists = taskBox.values
+        .where((element) => folderLists.contains(element.listId))
+        .map((e) => e.key);
+
+    taskBox.deleteAll(taskLists);
+    itemBox.deleteAll(folderLists);
+    itemBox.delete(id);
+    updateList();
   }
 
   void updateList() {

@@ -53,6 +53,7 @@ dependencies:
   build_runner: ^2.1.10
   is_first_run: ^1.0.0
   xid: ^1.0.7
+  flutter_slidable: ^1.2.0
 
 dev_dependencies:
   flutter_test:
