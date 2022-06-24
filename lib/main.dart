@@ -10,6 +10,9 @@ import 'package:todo/pages/login_page.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+//import 'package:flutter_isolate/flutter_isolate.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,6 +28,9 @@ Future<void> main() async {
   //await Hive.openBox("item_list");
   //await Hive.openBox("task_list");
   await Hive.openBox("cadastro");
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
