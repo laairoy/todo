@@ -37,7 +37,22 @@ dependencies:
   path_provider: ^2.0.2
   sqflite: ^2.0.0+3
   fl_chart: ^0.36.2
-  
+  firebase_core: ^1.18.0
+  firebase_database: ^9.0.16
+  path: ^1.6.4
+  webview_flutter : ^2.3.0
+  qr_flutter: ^4.0.0 #qrcode generation
+  url_launcher: ^6.0.12 #launching url
+  uuid: ^3.0.5
+  encrypt: ^5.0.1
+  crypto: ^3.0.1
+  crypto_keys: ^0.3.0
+  pointycastle: ^3.3.4
+  # capture screenshot
+  screenshot: ^1.2.3
+  #image save
+  image_gallery_saver: ^1.7.1
+  permission_handler:
  
 
   date_format: ^2.0.5
@@ -54,6 +69,7 @@ dependencies:
   is_first_run: ^1.0.0
   xid: ^1.0.7
   flutter_slidable: ^1.2.0
+  flutter_isolate: ^2.0.2
 
 dev_dependencies:
   flutter_test:
